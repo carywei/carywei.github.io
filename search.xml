@@ -4,6 +4,25 @@
   
     
     <entry>
+      <title>Github项目批量抓取</title>
+      <link href="/2020/02/22/2020/0222/github-xiang-mu-pi-liang-zhua-qu/"/>
+      <url>/2020/02/22/2020/0222/github-xiang-mu-pi-liang-zhua-qu/</url>
+      
+        <content type="html"><![CDATA[<p>有时间，我们同步Github的项目时候，每次单个项目pull很麻烦，最终发现可以通过python3的脚步完成多个项目同步完成。</p><h1 id="首先安装"><a href="#首先安装" class="headerlink" title="首先安装"></a>首先安装</h1><ul><li><p>安装批量工具</p><pre><code>pip install ghcloneall</code></pre><h1 id="其次编辑"><a href="#其次编辑" class="headerlink" title="其次编辑"></a>其次编辑</h1></li><li><p>ROI_Origanizations格式说明</p><pre><code>vim ROI_Organizations.md</code></pre></li><li><p>[OrgName] [u|o]<br>u 代表 OrgName 为用户<br>o 代表 OrgName 为 Organization<br>```</p><h1 id="然后抓取"><a href="#然后抓取" class="headerlink" title="然后抓取"></a>然后抓取</h1></li><li><p>脚步执行命令</p><pre><code>python3 GitCrawler.py</code></pre><blockquote><p>参考安装链接：<a href="https://github.com/carywei/GitCrawler" target="_blank" rel="noopener">https://github.com/carywei/GitCrawler</a></p></blockquote></li></ul>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> Github </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>2020年第一天班</title>
       <link href="/2020/02/03/2020/0203/2020-nian-di-yi-tian-ban/"/>
       <url>/2020/02/03/2020/0203/2020-nian-di-yi-tian-ban/</url>
