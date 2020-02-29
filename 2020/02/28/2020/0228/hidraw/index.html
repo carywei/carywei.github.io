@@ -1,0 +1,1867 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="HIDRAW, XinyongWei">
+    <meta name="description" content="hidraw设备主要用途，然后简要分析hidraw设备驱动，最后分析用户空间接口并实例。
+Hidraw介绍在内核Documentation/hid/hidraw.txt中对hidraw设备进行介绍，以及和hiddev的区别。
+hidraw提">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>HIDRAW | XinyongWei</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+
+    <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
+    <link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+    <link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/matery.css">
+    <link rel="stylesheet" type="text/css" href="/css/my.css">
+    
+    <script src="/libs/jquery/jquery.min.js"></script>
+    
+<meta name="generator" content="Hexo 4.2.0"><link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
+
+
+<body>
+    <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper head-container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <img src="/medias/logo.png" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span">XinyongWei</span>
+                </a>
+            </div>
+            
+
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fas fa-bars"></i></a>
+<ul class="right nav-menu">
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/" class="waves-effect waves-light">
+      
+      <i class="fas fa-home" style="zoom: 0.6;"></i>
+      
+      <span>首页</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/tags" class="waves-effect waves-light">
+      
+      <i class="fas fa-tags" style="zoom: 0.6;"></i>
+      
+      <span>标签</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/categories" class="waves-effect waves-light">
+      
+      <i class="fas fa-bookmark" style="zoom: 0.6;"></i>
+      
+      <span>分类</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/archives" class="waves-effect waves-light">
+      
+      <i class="fas fa-archive" style="zoom: 0.6;"></i>
+      
+      <span>归档</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/about" class="waves-effect waves-light">
+      
+      <i class="fas fa-user-circle" style="zoom: 0.6;"></i>
+      
+      <span>关于</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/contact" class="waves-effect waves-light">
+      
+      <i class="fas fa-comments" style="zoom: 0.6;"></i>
+      
+      <span>留言板</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/friends" class="waves-effect waves-light">
+      
+      <i class="fas fa-address-book" style="zoom: 0.6;"></i>
+      
+      <span>友情链接</span>
+    </a>
+    
+  </li>
+  
+  <li>
+    <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+      <i id="searchIcon" class="fas fa-search" title="搜索" style="zoom: 0.85;"></i>
+    </a>
+  </li>
+</ul>
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="/medias/logo.png" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">XinyongWei</div>
+        <div class="logo-desc">
+            
+            Never really desperate, only the lost of the soul.
+            
+        </div>
+    </div>
+
+    
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="/" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-home"></i>
+			
+			首页
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/tags" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-tags"></i>
+			
+			标签
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/categories" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-bookmark"></i>
+			
+			分类
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/archives" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-archive"></i>
+			
+			归档
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/about" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-user-circle"></i>
+			
+			关于
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/contact" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-comments"></i>
+			
+			留言板
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/friends" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-address-book"></i>
+			
+			友情链接
+		</a>
+          
+        </li>
+        
+        
+        <li><div class="divider"></div></li>
+        <li>
+            <a href="https://github.com/carywei" class="waves-effect waves-light" target="_blank">
+                <i class="fab fa-github-square fa-fw"></i>Fork Me
+            </a>
+        </li>
+        
+    </ul>
+</div>
+
+        </div>
+
+        
+            <style>
+    .nav-transparent .github-corner {
+        display: none !important;
+    }
+
+    .github-corner {
+        position: absolute;
+        z-index: 10;
+        top: 0;
+        right: 0;
+        border: 0;
+        transform: scale(1.1);
+    }
+
+    .github-corner svg {
+        color: #0f9d58;
+        fill: #fff;
+        height: 64px;
+        width: 64px;
+    }
+
+    .github-corner:hover .octo-arm {
+        animation: a 0.56s ease-in-out;
+    }
+
+    .github-corner .octo-arm {
+        animation: none;
+    }
+
+    @keyframes a {
+        0%,
+        to {
+            transform: rotate(0);
+        }
+        20%,
+        60% {
+            transform: rotate(-25deg);
+        }
+        40%,
+        80% {
+            transform: rotate(10deg);
+        }
+    }
+</style>
+
+<a href="https://github.com/carywei" class="github-corner tooltipped hide-on-med-and-down" target="_blank"
+   data-tooltip="Fork Me" data-position="left" data-delay="50">
+    <svg viewBox="0 0 250 250" aria-hidden="true">
+        <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+        <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
+              fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
+        <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
+              fill="currentColor" class="octo-body"></path>
+    </svg>
+</a>
+        
+    </nav>
+
+</header>
+
+    
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/21.jpg')">
+    <div class="container" style="right: 0px;left: 0px;">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <h1 class="description center-align post-title">HIDRAW</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<main class="post-container content">
+
+    
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+<style>
+    #articleContent h1::before,
+    #articleContent h2::before,
+    #articleContent h3::before,
+    #articleContent h4::before,
+    #articleContent h5::before,
+    #articleContent h6::before {
+        display: block;
+        content: " ";
+        height: 100px;
+        margin-top: -100px;
+        visibility: hidden;
+    }
+
+    #articleContent :focus {
+        outline: none;
+    }
+
+    .toc-fixed {
+        position: fixed;
+        top: 64px;
+    }
+
+    .toc-widget {
+        width: 345px;
+        padding-left: 20px;
+    }
+
+    .toc-widget .toc-title {
+        margin: 35px 0 15px 0;
+        padding-left: 17px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    .toc-widget ol {
+        padding: 0;
+        list-style: none;
+    }
+
+    #toc-content {
+        height: calc(100vh - 250px);
+        overflow: auto;
+    }
+
+    #toc-content ol {
+        padding-left: 10px;
+    }
+
+    #toc-content ol li {
+        padding-left: 10px;
+    }
+
+    #toc-content .toc-link:hover {
+        color: #42b983;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    #toc-content .toc-link::before {
+        background-color: transparent;
+        max-height: 25px;
+    }
+
+    #toc-content .is-active-link {
+        color: #42b983;
+    }
+
+    #toc-content .is-active-link::before {
+        background-color: #42b983;
+    }
+
+    #floating-toc-btn {
+        position: fixed;
+        right: 15px;
+        bottom: 76px;
+        padding-top: 15px;
+        margin-bottom: 0;
+        z-index: 998;
+    }
+
+    #floating-toc-btn .btn-floating {
+        width: 48px;
+        height: 48px;
+    }
+
+    #floating-toc-btn .btn-floating i {
+        line-height: 48px;
+        font-size: 1.4rem;
+    }
+</style>
+<div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- 文章内容详情 -->
+<div id="artDetail">
+    <div class="card">
+        <div class="card-content article-info">
+            <div class="row tag-cate">
+                <div class="col s7">
+                    
+                    <div class="article-tag">
+                        
+                            <a href="/tags/Linux/">
+                                <span class="chip bg-color">Linux</span>
+                            </a>
+                        
+                            <a href="/tags/Hidraw/">
+                                <span class="chip bg-color">Hidraw</span>
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+                <div class="col s5 right-align">
+                    
+                    <div class="post-cate">
+                        <i class="fas fa-bookmark fa-fw icon-category"></i>
+                        
+                            <a href="/categories/Linux/" class="post-category">
+                                Linux
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+
+            <div class="post-info">
+                
+                <div class="post-date info-break-policy">
+                    <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
+                    2020-02-28
+                </div>
+                
+
+                
+
+                
+
+                
+
+                
+            </div>
+
+        </div>
+        <hr class="clearfix">
+        <div class="card-content article-card-content">
+            <div id="articleContent">
+                <p>hidraw设备主要用途，然后简要分析hidraw设备驱动，最后分析用户空间接口并实例。</p>
+<h2 id="Hidraw介绍"><a href="#Hidraw介绍" class="headerlink" title="Hidraw介绍"></a>Hidraw介绍</h2><p>在内核<a href="https://elixir.bootlin.com/linux/latest/source/Documentation/hid/hidraw.rst" target="_blank" rel="noopener">Documentation/hid/hidraw.txt</a>中对hidraw设备进行介绍，以及和hiddev的区别。</p>
+<p>hidraw提供了一个通过USB/Bluetooth接口的裸数据接口，它和hiddev的区别体现在数据不经过HID parse解析，而且直接数据传输。</p>
+<blockquote>
+<p>如果用户空间应用程序知道怎么恰当和硬件设备通信，和能够手动构建HID 报表，那么hidraw应该被使用。这通常是在用户控件驱动自定义HID 设备的时候。</p>
+<p>Hidraw与不符合规范的HID 设备通信也是有利 的，这些设备以一种不符合报表描述符不一致的方式发送和接收数据。因为Hiddev解析器通过他发送和接收报表，检测设备的报表描述符，这样的通信是不可能使用hiddev。Hidraw是唯一的选择，为这些不兼容的设备编写一个定制的内核驱动程序。</p>
+<p>Hidraw一个好处是用户空间应用程序使用独立的底层硬件类型。当前，hidraw是通过bluetooth 和 usb实现。在将来，随着硬件总线的发展，hidraw将支持更多的类型。</p>
+</blockquote>
+<p><img src="https://carywei.github.io/2020/02/28/2020/0228/hidraw/hidraw.png?raw=true" alt="img"></p>
+<h2 id="Hidraw驱动"><a href="#Hidraw驱动" class="headerlink" title="Hidraw驱动"></a>Hidraw驱动</h2><ul>
+<li>hidraw也是hid类设备</li>
+</ul>
+<pre><code>static int __init hid_init(void)
+{
+    int ret;
+...
+        //注册总线hid_bus_type
+    ret = bus_register(&amp;hid_bus_type);
+...
+        //hidraw_init()被hid_init调用
+    ret = hidraw_init();
+    if (ret)
+        goto err_bus;
+        //创建/sys/kernel/debug/hid调试接口
+    hid_debug_init();
+...
+}
+
+static void __exit hid_exit(void)
+{
+    hid_debug_exit();
+    hidraw_exit();
+    bus_unregister(&amp;hid_bus_type);
+}</code></pre><pre><code>struct hidraw {------------------------------&gt;struct hidraw是hidraw设备实例
+    unsigned int minor;----------------------&gt;从设备号。
+    int exist;-------------------------------&gt;表示设备是否连接。
+    int open;--------------------------------&gt;表示设备open计数。
+    wait_queue_head_t wait;
+    struct hid_device *hid;------------------&gt;对应hid设备实例。
+    struct device *dev;
+    spinlock_t list_lock;
+    struct list_head list;
+};
+
+struct hidraw_report {
+    __u8 *value;
+    int len;
+};
+
+struct hidraw_list {-------------------------&gt;是hidraw设备一次传输的实例。
+    struct hidraw_report buffer[HIDRAW_BUFFER_SIZE];
+    int head;
+    int tail;
+    struct fasync_struct *fasync;
+    struct hidraw *hidraw;
+    struct list_head node;
+    struct mutex read_mutex;
+};</code></pre><h2 id="Hid总线"><a href="#Hid总线" class="headerlink" title="Hid总线"></a>Hid总线</h2><pre><code>static struct bus_type hid_bus_type = {
+    .name          = &quot;hid&quot;,
+    .dev_groups    = hid_dev_groups,
+    .match         = hid_bus_match,
+    .probe         = hid_device_probe,
+    .remove        = hid_device_remove,
+    .uevent        = hid_uevent,
+};
+
+static int hid_uevent(struct device *dev, struct kobj_uevent_env *env)
+{
+    struct hid_device *hdev = to_hid_device(dev);    
+
+    if (add_uevent_var(env, &quot;HID_ID=%04X:%08X:%08X&quot;,
+            hdev-&gt;bus, hdev-&gt;vendor, hdev-&gt;product))
+        return -ENOMEM;
+
+    if (add_uevent_var(env, &quot;HID_NAME=%s&quot;, hdev-&gt;name))
+        return -ENOMEM;
+
+    if (add_uevent_var(env, &quot;HID_PHYS=%s&quot;, hdev-&gt;phys))
+        return -ENOMEM;
+
+    if (add_uevent_var(env, &quot;HID_UNIQ=%s&quot;, hdev-&gt;uniq))
+        return -ENOMEM;
+
+    if (add_uevent_var(env, &quot;MODALIAS=hid:b%04Xg%04Xv%08Xp%08X&quot;,
+               hdev-&gt;bus, hdev-&gt;group, hdev-&gt;vendor, hdev-&gt;product))
+        return -ENOMEM;
+
+    return 0;
+}</code></pre><h2 id="Hidraw初始化"><a href="#Hidraw初始化" class="headerlink" title="Hidraw初始化"></a>Hidraw初始化</h2><pre><code>int __init hidraw_init(void)
+{
+    int result;
+    dev_t dev_id;
+
+        //从设备号0~63。
+    result = alloc_chrdev_region(&amp;dev_id, HIDRAW_FIRST_MINOR,
+            HIDRAW_MAX_DEVICES, &quot;hidraw&quot;);
+    if (result &lt; 0) {
+        pr_warn(&quot;can&#39;t get major number\n&quot;);
+        goto out;
+    }
+
+    hidraw_major = MAJOR(dev_id);
+
+        //创建hidraw设备类。
+    hidraw_class = class_create(THIS_MODULE, &quot;hidraw&quot;);
+    if (IS_ERR(hidraw_class)) {
+        result = PTR_ERR(hidraw_class);
+        goto error_cdev;
+    }
+
+    //初始化一个字符设备hidraw_dev，操作函数集为hidraw_ops。
+    cdev_init(&amp;hidraw_cdev, &amp;hidraw_ops);
+    result = cdev_add(&amp;hidraw_cdev, dev_id, HIDRAW_MAX_DEVICES);
+    if (result &lt; 0)
+        goto error_class;
+
+    printk(KERN_INFO &quot;hidraw: raw HID events driver (C) Jiri Kosina\n&quot;);
+out:
+    return result;
+
+error_class:
+    class_destroy(hidraw_class);
+error_cdev:
+    unregister_chrdev_region(dev_id, HIDRAW_MAX_DEVICES);
+    goto out;
+}
+
+void hidraw_exit(void)
+{
+    dev_t dev_id = MKDEV(hidraw_major, 0);
+
+    cdev_del(&amp;hidraw_cdev);
+    class_destroy(hidraw_class);
+    unregister_chrdev_region(dev_id, HIDRAW_MAX_DEVICES);
+
+}</code></pre><h2 id="hidraw设备操作"><a href="#hidraw设备操作" class="headerlink" title="hidraw设备操作"></a>hidraw设备操作</h2><pre><code>static const struct file_operations hidraw_ops = {
+    .owner =        THIS_MODULE,
+    .read =         hidraw_read,
+    .write =        hidraw_write,
+    .poll =         hidraw_poll,
+    .open =         hidraw_open,
+    .release =      hidraw_release,
+    .unlocked_ioctl = hidraw_ioctl,
+    .fasync =    hidraw_fasync,
+#ifdef CONFIG_COMPAT
+    .compat_ioctl   = hidraw_ioctl,
+#endif
+    .llseek =    noop_llseek,
+};
+
+static ssize_t hidraw_read(struct file *file, char __user *buffer, size_t count, loff_t *ppos)
+{
+    struct hidraw_list *list = file-&gt;private_data;
+    int ret = 0, len;
+    DECLARE_WAITQUEUE(wait, current);
+
+    mutex_lock(&amp;list-&gt;read_mutex);
+
+    while (ret == 0) {
+        if (list-&gt;head == list-&gt;tail) {
+            add_wait_queue(&amp;list-&gt;hidraw-&gt;wait, &amp;wait);
+            set_current_state(TASK_INTERRUPTIBLE);
+
+            while (list-&gt;head == list-&gt;tail) {
+                if (signal_pending(current)) {
+                    ret = -ERESTARTSYS;
+                    break;
+                }
+                if (!list-&gt;hidraw-&gt;exist) {
+                    ret = -EIO;
+                    break;
+                }
+                if (file-&gt;f_flags &amp; O_NONBLOCK) {
+                    ret = -EAGAIN;
+                    break;
+                }
+
+                /* allow O_NONBLOCK to work well from other threads */
+                mutex_unlock(&amp;list-&gt;read_mutex);
+                schedule();
+                mutex_lock(&amp;list-&gt;read_mutex);
+                set_current_state(TASK_INTERRUPTIBLE);
+            }
+
+            set_current_state(TASK_RUNNING);
+            remove_wait_queue(&amp;list-&gt;hidraw-&gt;wait, &amp;wait);
+        }
+
+        if (ret)
+            goto out;
+
+        len = list-&gt;buffer[list-&gt;tail].len &gt; count ?
+            count : list-&gt;buffer[list-&gt;tail].len;
+
+        if (list-&gt;buffer[list-&gt;tail].value) {
+            if (copy_to_user(buffer, list-&gt;buffer[list-&gt;tail].value, len)) {
+                ret = -EFAULT;
+                goto out;
+            }
+            ret = len;
+        }
+
+        kfree(list-&gt;buffer[list-&gt;tail].value);
+        list-&gt;buffer[list-&gt;tail].value = NULL;
+        list-&gt;tail = (list-&gt;tail + 1) &amp; (HIDRAW_BUFFER_SIZE - 1);
+    }
+out:
+    mutex_unlock(&amp;list-&gt;read_mutex);
+    return ret;
+}
+
+static ssize_t hidraw_send_report(struct file *file, const char __user *buffer, size_t count, unsigned char report_type)
+{
+    unsigned int minor = iminor(file_inode(file));
+    struct hid_device *dev;
+    __u8 *buf;
+    int ret = 0;
+
+    if (!hidraw_table[minor] || !hidraw_table[minor]-&gt;exist) {
+        ret = -ENODEV;
+        goto out;
+    }
+
+        //根据minor号找到对应hidraw设备的hid_device。
+    dev = hidraw_table[minor]-&gt;hid;
+
+...
+    buf = memdup_user(buffer, count);
+    if (IS_ERR(buf)) {
+        ret = PTR_ERR(buf);
+        goto out;
+    }
+
+    if ((report_type == HID_OUTPUT_REPORT) &amp;&amp;
+        !(dev-&gt;quirks &amp; HID_QUIRK_NO_OUTPUT_REPORTS_ON_INTR_EP)) {
+        ret = hid_hw_output_report(dev, buf, count);
+        if (ret != -ENOSYS)
+            goto out_free;
+    }
+
+        //调用实际硬件接口发送report，比如usb、bluetooth等。
+    ret = hid_hw_raw_request(dev, buf[0], buf, count, report_type,
+                HID_REQ_SET_REPORT);
+
+out_free:
+    kfree(buf);
+out:
+    return ret;
+}
+
+static ssize_t hidraw_write(struct file *file, const char __user *buffer, size_t count, loff_t *ppos)
+{
+    ssize_t ret;
+    mutex_lock(&amp;minors_lock);
+    ret = hidraw_send_report(file, buffer, count, HID_OUTPUT_REPORT);
+    mutex_unlock(&amp;minors_lock);
+    return ret;
+}
+
+static ssize_t hidraw_get_report(struct file *file, char __user *buffer, size_t count, unsigned char report_type)
+{
+    unsigned int minor = iminor(file_inode(file));
+    struct hid_device *dev;
+    __u8 *buf;
+    int ret = 0, len;
+    unsigned char report_number;
+
+    dev = hidraw_table[minor]-&gt;hid;
+...
+    buf = kmalloc(count * sizeof(__u8), GFP_KERNEL);
+    if (!buf) {
+        ret = -ENOMEM;
+        goto out;
+    }
+
+    if (copy_from_user(&amp;report_number, buffer, 1)) {
+        ret = -EFAULT;
+        goto out_free;
+    }
+
+        //从硬件接口接收数据。
+    ret = hid_hw_raw_request(dev, report_number, buf, count, report_type,
+                 HID_REQ_GET_REPORT);
+...
+    if (copy_to_user(buffer, buf, len)) {
+        ret = -EFAULT;
+        goto out_free;
+    }
+
+    ret = len;
+
+out_free:
+    kfree(buf);
+out:
+    return ret;
+}
+
+static unsigned int hidraw_poll(struct file *file, poll_table *wait)
+{
+    struct hidraw_list *list = file-&gt;private_data;
+
+    poll_wait(file, &amp;list-&gt;hidraw-&gt;wait, wait);
+    if (list-&gt;head != list-&gt;tail)
+        return POLLIN | POLLRDNORM;
+    if (!list-&gt;hidraw-&gt;exist)
+        return POLLERR | POLLHUP;
+    return 0;
+}
+
+static int hidraw_open(struct inode *inode, struct file *file)
+{
+    unsigned int minor = iminor(inode);
+    struct hidraw *dev;
+    struct hidraw_list *list;
+    unsigned long flags;
+    int err = 0;
+
+    if (!(list = kzalloc(sizeof(struct hidraw_list), GFP_KERNEL))) {
+        err = -ENOMEM;
+        goto out;
+    }
+
+    mutex_lock(&amp;minors_lock);
+    if (!hidraw_table[minor] || !hidraw_table[minor]-&gt;exist) {
+        err = -ENODEV;
+        goto out_unlock;
+    }
+
+    dev = hidraw_table[minor];
+    if (!dev-&gt;open++) {
+        //调用底层设备即具体接口的power()函数，hdev-&gt;ll_driver-&gt;power()。
+        err = hid_hw_power(dev-&gt;hid, PM_HINT_FULLON);--------------
+        if (err &lt; 0) {
+            dev-&gt;open--;
+            goto out_unlock;
+        }
+                //调用底层设备的open()函数，hdev-&gt;ll_driver-&gt;open()。
+        err = hid_hw_open(dev-&gt;hid);
+        if (err &lt; 0) {
+            hid_hw_power(dev-&gt;hid, PM_HINT_NORMAL);
+            dev-&gt;open--;
+            goto out_unlock;
+        }
+    }
+
+    list-&gt;hidraw = hidraw_table[minor];
+    mutex_init(&amp;list-&gt;read_mutex);
+    spin_lock_irqsave(&amp;hidraw_table[minor]-&gt;list_lock, flags);
+    list_add_tail(&amp;list-&gt;node, &amp;hidraw_table[minor]-&gt;list);
+    spin_unlock_irqrestore(&amp;hidraw_table[minor]-&gt;list_lock, flags);
+    file-&gt;private_data = list;
+...
+}
+
+static int hidraw_fasync(int fd, struct file *file, int on)
+{
+    struct hidraw_list *list = file-&gt;private_data;
+        //发送异步通知信号。
+    return fasync_helper(fd, file, on, &amp;list-&gt;fasync);
+}
+
+static void drop_ref(struct hidraw *hidraw, int exists_bit)
+{
+    if (exists_bit) {
+        hidraw-&gt;exist = 0;
+        if (hidraw-&gt;open) {
+            hid_hw_close(hidraw-&gt;hid);
+            wake_up_interruptible(&amp;hidraw-&gt;wait);
+        }
+        device_destroy(hidraw_class,
+                   MKDEV(hidraw_major, hidraw-&gt;minor));
+    } else {
+            //打开计算减1。
+        --hidraw-&gt;open;
+    }
+
+    if (!hidraw-&gt;open) {//当计数为0后，开始释放资源。
+        if (!hidraw-&gt;exist) {
+            hidraw_table[hidraw-&gt;minor] = NULL;
+            kfree(hidraw);
+        } else {
+            /* close device for last reader */
+            hid_hw_power(hidraw-&gt;hid, PM_HINT_NORMAL);
+            hid_hw_close(hidraw-&gt;hid);
+        }
+    }
+}
+
+static int hidraw_release(struct inode * inode, struct file * file)
+{
+    unsigned int minor = iminor(inode);
+    struct hidraw_list *list = file-&gt;private_data;
+    unsigned long flags;
+
+    mutex_lock(&amp;minors_lock);
+
+    spin_lock_irqsave(&amp;hidraw_table[minor]-&gt;list_lock, flags);
+    list_del(&amp;list-&gt;node);
+    spin_unlock_irqrestore(&amp;hidraw_table[minor]-&gt;list_lock, flags);
+    kfree(list);
+
+    drop_ref(hidraw_table[minor], 0);
+
+    mutex_unlock(&amp;minors_lock);
+    return 0;
+}
+
+static long hidraw_ioctl(struct file *file, unsigned int cmd,
+                            unsigned long arg)
+{
+    struct inode *inode = file_inode(file);
+    unsigned int minor = iminor(inode);
+    long ret = 0;
+    struct hidraw *dev;
+    void __user *user_arg = (void __user*) arg;
+
+    mutex_lock(&amp;minors_lock);
+    dev = hidraw_table[minor];
+    if (!dev) {
+        ret = -ENODEV;
+        goto out;
+    }
+
+    switch (cmd) {
+        case HIDIOCGRDESCSIZE://Get report descriptor size。
+            if (put_user(dev-&gt;hid-&gt;rsize, (int __user *)arg))
+                ret = -EFAULT;
+            break;
+
+        case HIDIOCGRDESC://Get report descriptor。
+            {
+                __u32 len;
+
+                if (get_user(len, (int __user *)arg))
+                    ret = -EFAULT;
+                else if (len &gt; HID_MAX_DESCRIPTOR_SIZE - 1)
+                    ret = -EINVAL;
+                else if (copy_to_user(user_arg + offsetof(
+                    struct hidraw_report_descriptor,
+                    value[0]),
+                    dev-&gt;hid-&gt;rdesc,
+                    min(dev-&gt;hid-&gt;rsize, len)))
+                    ret = -EFAULT;
+                break;
+            }
+        case HIDIOCGRAWINFO://Get raw info，包括bus类型，vid和pid。
+            {
+                struct hidraw_devinfo dinfo;
+
+                dinfo.bustype = dev-&gt;hid-&gt;bus;
+                dinfo.vendor = dev-&gt;hid-&gt;vendor;
+                dinfo.product = dev-&gt;hid-&gt;product;
+                if (copy_to_user(user_arg, &amp;dinfo, sizeof(dinfo)))
+                    ret = -EFAULT;
+                break;
+            }
+        default:
+            {
+                struct hid_device *hid = dev-&gt;hid;
+                if (_IOC_TYPE(cmd) != &#39;H&#39;) {
+                    ret = -EINVAL;
+                    break;
+                }
+                                //Send a feature report。
+                if (_IOC_NR(cmd) == _IOC_NR(HIDIOCSFEATURE(0))) {
+                    int len = _IOC_SIZE(cmd);
+                    ret = hidraw_send_report(file, user_arg, len, HID_FEATURE_REPORT);
+                    break;
+                }
+                //Get a feature report。
+                if (_IOC_NR(cmd) == _IOC_NR(HIDIOCGFEATURE(0))) {
+                    int len = _IOC_SIZE(cmd);
+                    ret = hidraw_get_report(file, user_arg, len, HID_FEATURE_REPORT);
+                    break;
+                }
+
+                /* Begin Read-only ioctls. */
+                if (_IOC_DIR(cmd) != _IOC_READ) {
+                    ret = -EINVAL;
+                    break;
+                }
+                                //Get raw name。
+                if (_IOC_NR(cmd) == _IOC_NR(HIDIOCGRAWNAME(0))) {
+                    int len = strlen(hid-&gt;name) + 1;
+                    if (len &gt; _IOC_SIZE(cmd))
+                        len = _IOC_SIZE(cmd);
+                    ret = copy_to_user(user_arg, hid-&gt;name, len) ?
+                        -EFAULT : len;
+                    break;
+                }
+                                //Get physical address。
+                if (_IOC_NR(cmd) == _IOC_NR(HIDIOCGRAWPHYS(0))) {
+                    int len = strlen(hid-&gt;phys) + 1;
+                    if (len &gt; _IOC_SIZE(cmd))
+                        len = _IOC_SIZE(cmd);
+                    ret = copy_to_user(user_arg, hid-&gt;phys, len) ?
+                        -EFAULT : len;
+                    break;
+                }
+            }
+
+        ret = -ENOTTY;
+    }
+out:
+    mutex_unlock(&amp;minors_lock);
+    return ret;
+}</code></pre><p>由于一个系统下可能存在多个hidraw设备，常通过HIDIOCGRAWINFO获取信息，判断对应的hidraw设备。</p>
+<pre><code>int hidraw_connect(struct hid_device *hid)
+{
+    int minor, result;
+    struct hidraw *dev;
+
+    /* we accept any HID device, all applications */
+
+    dev = kzalloc(sizeof(struct hidraw), GFP_KERNEL);
+    if (!dev)
+        return -ENOMEM;
+
+    result = -EINVAL;
+
+    mutex_lock(&amp;minors_lock);
+    //分配hidraw设备的minor号，并将dev赋给hidraw_table[]。
+    for (minor = 0; minor &lt; HIDRAW_MAX_DEVICES; minor++) {
+        if (hidraw_table[minor])
+            continue;
+        hidraw_table[minor] = dev;
+        result = 0;
+        break;
+    }
+
+    if (result) {
+        mutex_unlock(&amp;minors_lock);
+        kfree(dev);
+        goto out;
+    }
+
+        //创建/dev/hidrawX设备节点。
+    dev-&gt;dev = device_create(hidraw_class, &amp;hid-&gt;dev, MKDEV(hidraw_major, minor),
+                 NULL, &quot;%s%d&quot;, &quot;hidraw&quot;, minor);
+
+    if (IS_ERR(dev-&gt;dev)) {
+        hidraw_table[minor] = NULL;
+        mutex_unlock(&amp;minors_lock);
+        result = PTR_ERR(dev-&gt;dev);
+        kfree(dev);
+        goto out;
+    }
+
+    init_waitqueue_head(&amp;dev-&gt;wait);
+    spin_lock_init(&amp;dev-&gt;list_lock);
+    INIT_LIST_HEAD(&amp;dev-&gt;list);
+
+    dev-&gt;hid = hid;
+    dev-&gt;minor = minor;
+
+    dev-&gt;exist = 1;
+    hid-&gt;hidraw = dev;
+
+    mutex_unlock(&amp;minors_lock);
+out:
+    return result;
+
+}
+EXPORT_SYMBOL_GPL(hidraw_connect);
+
+void hidraw_disconnect(struct hid_device *hid)
+{
+    struct hidraw *hidraw = hid-&gt;hidraw;
+
+    mutex_lock(&amp;minors_lock);
+
+    drop_ref(hidraw, 1);
+
+    mutex_unlock(&amp;minors_lock);
+}
+EXPORT_SYMBOL_GPL(hidraw_disconnect);</code></pre><blockquote>
+<p>所以hidraw的驱动分为两部分，一是hidraw_init()发起的整个hidraw设备驱动的初始化，二是底层驱动检测到hidraw设备后通过hidraw_connect()/hidraw_disconnect()创建或者销毁设备。</p>
+<p>当USB/Bluetooth检查到设备是hidraw类型之后，就会调用hidraw提供的接口创建设备，表现为创建节点/dev/hidrawx。</p>
+<p>后续用户空间程序对/dev/hidrawx进行read/write/ioctl等操作。</p>
+</blockquote>
+<h2 id="hidraw测试程序"><a href="#hidraw测试程序" class="headerlink" title="hidraw测试程序"></a>hidraw测试程序</h2><p>内核提供了一个示例程序 <a href="https://elixir.bootlin.com/linux/latest/source/samples/hidraw/hid-example.c" target="_blank" rel="noopener">hid-example.c</a> 下面结合内核代码简单分析一下。遍历/dev下所有的hidraw设备，然后读取信息。</p>
+<pre><code>/* Linux */
+#include &lt;linux/types.h&gt;
+#include &lt;linux/input.h&gt;
+#include &lt;linux/hidraw.h&gt;
+#include &lt;dirent.h&gt;
+
+#ifndef HIDIOCSFEATURE
+#warning Please have your distro update the userspace kernel headers
+#define HIDIOCSFEATURE(len)    _IOC(_IOC_WRITE|_IOC_READ, &#39;H&#39;, 0x06, len)
+#define HIDIOCGFEATURE(len)    _IOC(_IOC_WRITE|_IOC_READ, &#39;H&#39;, 0x07, len)
+#endif
+
+/* Unix */
+#include &lt;sys/ioctl.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;sys/stat.h&gt;
+#include &lt;fcntl.h&gt;
+#include &lt;unistd.h&gt;
+
+/* C */
+#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;errno.h&gt;
+
+const char *bus_str(int bus);
+
+int main(int argc, char **argv)
+{
+    int fd;
+    int i, res, desc_size = 0;
+    char buf[256];
+    struct hidraw_report_descriptor rpt_desc;
+    struct hidraw_devinfo info;
+    char device[32] = &quot;/dev/hidraw0&quot;;
+    DIR *dir = NULL;
+    struct dirent *ptr;
+
+    /* Open dir /dev. */
+    dir = opendir(&quot;/dev&quot;);
+    if(!dir) {
+        perror(&quot;Popen dir failed...&quot;);
+        return -ENOENT;
+    }
+
+    /* 遍历/dev目录下所有的文件。 */
+    while(ptr = readdir(dir)) {
+            //判断设备是否为字符设备，其他设备包括
+            //DT_UNKNOWN/DT_FIFO/DT_CHR DT_DIR/DT_BLK/DT_REG/DT_LNK/DT_SOCK/DT_WHT。
+        if(ptr-&gt;d_type != DT_CHR)
+            continue;
+if(!strncmp(ptr-&gt;d_name, &quot;hidraw&quot;, 6)) {
+
+            snprintf(device, sizeof(device), &quot;%s/%s&quot;, &quot;/dev&quot;, ptr-&gt;d_name);
+
+            /* Open the Device with non-blocking reads. In real life,
+               don&#39;t use a hard coded path; use libudev instead. */
+            //打开hidraw设备，对应内核的hidraw_open()。   
+            fd = open(device, O_RDWR|O_NONBLOCK);
+            if (fd &lt; 0) {
+                printf(&quot;Unable to open device %s.\n&quot;, device);
+                return 1;
+            }
+
+            memset(&amp;rpt_desc, 0x0, sizeof(rpt_desc));
+            memset(&amp;info, 0x0, sizeof(info));
+            memset(buf, 0x0, sizeof(buf));
+
+            printf(&quot;\n\n=================================Device %s info=================================\n&quot;, device);
+            /* Get Raw Name */
+            //对应hidraw_ioctl()的HIDIOCGRAWNAME。
+            res = ioctl(fd, HIDIOCGRAWNAME(256), buf);
+            if (res &lt; 0)
+                perror(&quot;HIDIOCGRAWNAME&quot;);
+            else
+                printf(&quot;Raw Name: %s\n&quot;, buf);
+
+            /* Get Physical Location */
+            //对应HIDIOCGRAWPHYS。
+            res = ioctl(fd, HIDIOCGRAWPHYS(256), buf);
+            if (res &lt; 0)
+                perror(&quot;HIDIOCGRAWPHYS&quot;);
+            else
+                printf(&quot;Raw Phys: %s\n&quot;, buf);
+
+            /* Get Raw Info */
+            //对应HIDIOCGRAWINFO。
+            res = ioctl(fd, HIDIOCGRAWINFO, &amp;info);
+            if (res &lt; 0) {
+                perror(&quot;HIDIOCGRAWINFO&quot;);
+            } else {
+                printf(&quot;Raw Info:\n&quot;);
+                printf(&quot;\tbustype: %d (%s)\n&quot;,
+                    info.bustype, bus_str(info.bustype));
+                printf(&quot;\tvendor: 0x%04hx\n&quot;, info.vendor);
+                printf(&quot;\tproduct: 0x%04hx\n&quot;, info.product);
+            }
+
+            /* Get Report Descriptor Size */
+            //对应HIDIOCGRDESCSIZE
+            res = ioctl(fd, HIDIOCGRDESCSIZE, &amp;desc_size);
+            if (res &lt; 0)
+                perror(&quot;HIDIOCGRDESCSIZE&quot;);
+            else
+                printf(&quot;Report Descriptor Size: %d\n&quot;, desc_size);
+
+            /* Get Report Descriptor */
+            rpt_desc.size = desc_size;
+            //对应HIDIOCGRDESC。
+            res = ioctl(fd, HIDIOCGRDESC, &amp;rpt_desc);
+            if (res &lt; 0) {
+                perror(&quot;HIDIOCGRDESC&quot;);
+            } else {
+                printf(&quot;Report Descriptor:\n&quot;);
+                for (i = 0; i &lt; rpt_desc.size; i++)
+                    printf(&quot;%hhx &quot;, rpt_desc.value[i]);
+                puts(&quot;\n&quot;);
+            }
+
+            /* Set Feature */
+            buf[0] = 0x9; /* Report Number */
+            buf[1] = 0xff;
+            buf[2] = 0xff;
+            buf[3] = 0xff;
+            //对应HIDIOCSFEATURE。
+            res = ioctl(fd, HIDIOCSFEATURE(4), buf);
+            if (res &lt; 0)
+                perror(&quot;HIDIOCSFEATURE&quot;);
+            else
+                printf(&quot;ioctl HIDIOCGFEATURE returned: %d\n&quot;, res);
+
+            /* Get Feature */
+            buf[0] = 0x9; /* Report Number */
+            //对应HIDIOCGFEATURE。
+            res = ioctl(fd, HIDIOCGFEATURE(256), buf);
+            if (res &lt; 0) {
+                perror(&quot;HIDIOCGFEATURE&quot;);
+            } else {
+                printf(&quot;ioctl HIDIOCGFEATURE returned: %d\n&quot;, res);
+                printf(&quot;Report data (not containing the report number):\n\t&quot;);
+                for (i = 0; i &lt; res; i++)
+                    printf(&quot;%hhx &quot;, buf[i]);
+                puts(&quot;\n&quot;);
+            }
+
+            /* Send a Report to the Device */
+            buf[0] = 0x1; /* Report Number */
+            buf[1] = 0x77;
+            res = write(fd, buf, 2);
+            if (res &lt; 0) {
+                printf(&quot;Error: %d\n&quot;, errno);
+                perror(&quot;write&quot;);
+            } else {
+                printf(&quot;write() wrote %d bytes\n&quot;, res);
+            }
+
+            /* Get a report from the device */
+            res = read(fd, buf, 16);
+            if (res &lt; 0) {
+                perror(&quot;read&quot;);
+            } else {
+                printf(&quot;read() read %d bytes:\n\t&quot;, res);
+                for (i = 0; i &lt; res; i++)
+                    printf(&quot;%hhx &quot;, buf[i]);
+                puts(&quot;\n&quot;);
+            }
+
+            close(fd);
+        }
+    }
+    return 0;
+}
+
+const char *
+bus_str(int bus)
+{
+    switch (bus) {
+    case BUS_USB:
+        return &quot;USB&quot;;
+        break;
+    case BUS_HIL:
+        return &quot;HIL&quot;;
+        break;
+    case BUS_BLUETOOTH:
+        return &quot;Bluetooth&quot;;
+        break;
+    case BUS_VIRTUAL:
+        return &quot;Virtual&quot;;
+        break;
+    default:
+        return &quot;Other&quot;;
+        break;
+    }
+}</code></pre><blockquote>
+<p> 综合来看hidraw设备是hid的一种，传输裸数据，对应的底层硬件可能是USB/Bluetooth等。</p>
+<p>通过对hidraw设备的操作，ioctl可以配置hidraw设备，read/write可以对hidraw设备进行读写。</p>
+</blockquote>
+<p><a href="https://www.cnblogs.com/arnoldlu/p/11418391.html" target="_blank" rel="noopener">文章原连接</a></p>
+
+            </div>
+            <hr/>
+
+            
+
+    <div class="reprint" id="reprint-statement">
+        
+            <div class="reprint__author">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-user">
+                        文章作者:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="http://carywei.github.io" rel="external nofollow noreferrer">XinyongWei</a>
+                </span>
+            </div>
+            <div class="reprint__type">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-link">
+                        文章链接:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="http://carywei.github.io/2020/02/28/2020/0228/hidraw/">http://carywei.github.io/2020/02/28/2020/0228/hidraw/</a>
+                </span>
+            </div>
+            <div class="reprint__notice">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-copyright">
+                        版权声明:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    本博客所有文章除特別声明外，均采用
+                    <a href="https://creativecommons.org/licenses/by/4.0/deed.zh" rel="external nofollow noreferrer" target="_blank">CC BY 4.0</a>
+                    许可协议。转载请注明来源
+                    <a href="http://carywei.github.io" target="_blank">XinyongWei</a>
+                    !
+                </span>
+            </div>
+        
+    </div>
+
+    <script async defer>
+      document.addEventListener("copy", function (e) {
+        let toastHTML = '<span>复制成功，请遵循本文的转载规则</span><button class="btn-flat toast-action" onclick="navToReprintStatement()" style="font-size: smaller">查看</a>';
+        M.toast({html: toastHTML})
+      });
+
+      function navToReprintStatement() {
+        $("html, body").animate({scrollTop: $("#reprint-statement").offset().top - 80}, 800);
+      }
+    </script>
+
+
+
+            <div class="tag_share" style="display: block;">
+                <div class="post-meta__tag-list" style="display: inline-block;">
+                    
+                        <div class="article-tag">
+                            
+                                <a href="/tags/Linux/">
+                                    <span class="chip bg-color">Linux</span>
+                                </a>
+                            
+                                <a href="/tags/Hidraw/">
+                                    <span class="chip bg-color">Hidraw</span>
+                                </a>
+                            
+                        </div>
+                    
+                </div>
+                <div class="post_share" style="zoom: 80%; width: fit-content; display: inline-block; float: right; margin: -0.15rem 0;">
+                    <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+
+<div id="article-share">
+    
+    
+    <div class="social-share" data-sites="twitter,facebook,google,qq,qzone,wechat,weibo,douban,linkedin" data-wechat-qrcode-helper="<p>微信扫一扫即可分享！</p>"></div>
+    <script src="/libs/share/js/social-share.min.js"></script>
+    
+
+    
+
+</div>
+
+                </div>
+            </div>
+            
+                <style>
+    #reward {
+        margin: 40px 0;
+        text-align: center;
+    }
+
+    #reward .reward-link {
+        font-size: 1.4rem;
+        line-height: 38px;
+    }
+
+    #reward .btn-floating:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #rewardModal {
+        width: 320px;
+        height: 350px;
+    }
+
+    #rewardModal .reward-title {
+        margin: 15px auto;
+        padding-bottom: 5px;
+    }
+
+    #rewardModal .modal-content {
+        padding: 10px;
+    }
+
+    #rewardModal .close {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 1.3rem;
+        line-height: 20px;
+        cursor: pointer;
+    }
+
+    #rewardModal .close:hover {
+        color: #ef5350;
+        transform: scale(1.3);
+        -moz-transform:scale(1.3);
+        -webkit-transform:scale(1.3);
+        -o-transform:scale(1.3);
+    }
+
+    #rewardModal .reward-tabs {
+        margin: 0 auto;
+        width: 210px;
+    }
+
+    .reward-tabs .tabs {
+        height: 38px;
+        margin: 10px auto;
+        padding-left: 0;
+    }
+
+    .reward-content ul {
+        padding-left: 0 !important;
+    }
+
+    .reward-tabs .tabs .tab {
+        height: 38px;
+        line-height: 38px;
+    }
+
+    .reward-tabs .tab a {
+        color: #fff;
+        background-color: #ccc;
+    }
+
+    .reward-tabs .tab a:hover {
+        background-color: #ccc;
+        color: #fff;
+    }
+
+    .reward-tabs .wechat-tab .active {
+        color: #fff !important;
+        background-color: #22AB38 !important;
+    }
+
+    .reward-tabs .alipay-tab .active {
+        color: #fff !important;
+        background-color: #019FE8 !important;
+    }
+
+    .reward-tabs .reward-img {
+        width: 210px;
+        height: 210px;
+    }
+</style>
+
+<div id="reward">
+    <a href="#rewardModal" class="reward-link modal-trigger btn-floating btn-medium waves-effect waves-light red">赏</a>
+
+    <!-- Modal Structure -->
+    <div id="rewardModal" class="modal">
+        <div class="modal-content">
+            <a class="close modal-close"><i class="fas fa-times"></i></a>
+            <h4 class="reward-title">你的赏识是我前进的动力</h4>
+            <div class="reward-content">
+                <div class="reward-tabs">
+                    <ul class="tabs row">
+                        <li class="tab col s6 alipay-tab waves-effect waves-light"><a href="#alipay">支付宝</a></li>
+                        <li class="tab col s6 wechat-tab waves-effect waves-light"><a href="#wechat">微 信</a></li>
+                    </ul>
+                    <div id="alipay">
+                        <img src="/medias/reward/alipay.jpg" class="reward-img" alt="支付宝打赏二维码">
+                    </div>
+                    <div id="wechat">
+                        <img src="/medias/reward/wechat.png" class="reward-img" alt="微信打赏二维码">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('.tabs').tabs();
+    });
+</script>
+            
+        </div>
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
+            <div class="card">
+                <a href="/2020/02/28/2020/0228/hidraw/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/21.jpg" class="responsive-img" alt="HIDRAW">
+                        
+                        <span class="card-title">HIDRAW</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            hidraw设备主要用途，然后简要分析hidraw设备驱动，最后分析用户空间接口并实例。
+Hidraw介绍在内核Documentation/hid/hidraw.txt中对hidraw设备进行介绍，以及和hiddev的区别。
+hidraw提
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-02-28
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/Linux/" class="post-category">
+                                    Linux
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/Linux/">
+                        <span class="chip bg-color">Linux</span>
+                    </a>
+                    
+                    <a href="/tags/Hidraw/">
+                        <span class="chip bg-color">Hidraw</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2020/02/26/2020/0226/hid/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/2.jpg" class="responsive-img" alt="HID Debug">
+                        
+                        <span class="card-title">HID Debug</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            在Android系统经常需要分析蓝牙HID设备，特别HOGP协议的蓝牙输入设备 (UHID设备) ，以下从Linux角度，Bluedroid角度
+看看有哪些debug手段吧。
+##Linux角度
+####Debug文件：
+
+通过 /sys/
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-02-26
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/USB/" class="post-category">
+                                    USB
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/HID/">
+                        <span class="chip bg-color">HID</span>
+                    </a>
+                    
+                    <a href="/tags/HOGP/">
+                        <span class="chip bg-color">HOGP</span>
+                    </a>
+                    
+                    <a href="/tags/UHID/">
+                        <span class="chip bg-color">UHID</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+
+</div>
+
+
+
+<!-- 代码块功能依赖 -->
+<script type="text/javascript" src="/libs/codeBlock/codeBlockFuction.js"></script>
+
+<!-- 代码语言 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeLang.js"></script>
+
+
+<!-- 代码块复制 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeCopy.js"></script>
+
+
+<!-- 代码块收缩 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeShrink.js"></script>
+
+
+<!-- 代码块折行 -->
+
+<style type="text/css">
+code[class*="language-"], pre[class*="language-"] { white-space: pre !important; }
+</style>
+
+
+    </div>
+    <div id="toc-aside" class="expanded col l3 hide-on-med-and-down">
+        <div class="toc-widget">
+            <div class="toc-title"><i class="far fa-list-alt"></i>&nbsp;&nbsp;目录</div>
+            <div id="toc-content"></div>
+        </div>
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. -->
+
+<div id="floating-toc-btn" class="hide-on-med-and-down">
+    <a class="btn-floating btn-large bg-color">
+        <i class="fas fa-list-ul"></i>
+    </a>
+</div>
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            collapseDepth: Number('0'),
+            headingSelector: 'h2, h3, h4'
+        });
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('#articleContent').children('h2, h3, h4').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+        
+        /* 修复文章卡片 div 的宽度. */
+        let fixPostCardWidth = function (srcId, targetId) {
+            let srcDiv = $('#' + srcId);
+            if (srcDiv.length === 0) {
+                return;
+            }
+
+            let w = srcDiv.width();
+            if (w >= 450) {
+                w = w + 21;
+            } else if (w >= 350 && w < 450) {
+                w = w + 18;
+            } else if (w >= 300 && w < 350) {
+                w = w + 16;
+            } else {
+                w = w + 14;
+            }
+            $('#' + targetId).width(w);
+        };
+
+        // 切换TOC目录展开收缩的相关操作.
+        const expandedClass = 'expanded';
+        let $tocAside = $('#toc-aside');
+        let $mainContent = $('#main-content');
+        $('#floating-toc-btn .btn-floating').click(function () {
+            if ($tocAside.hasClass(expandedClass)) {
+                $tocAside.removeClass(expandedClass).hide();
+                $mainContent.removeClass('l9');
+            } else {
+                $tocAside.addClass(expandedClass).show();
+                $mainContent.addClass('l9');
+            }
+            fixPostCardWidth('artDetail', 'prenext-posts');
+        });
+        
+    });
+</script>
+
+    
+
+</main>
+
+
+
+    <footer class="page-footer bg-color">
+    <div class="container row center-align" style="margin-bottom: 0px !important;">
+        <div class="col s12 m8 l8 copy-right">
+            Copyright&nbsp;&copy;
+            <span id="year">2020</span>
+            <a href="http://carywei.github.io" target="_blank">XinyongWei</a>
+            |&nbsp;Powered by&nbsp;<a href="https://hexo.io/" target="_blank">Hexo</a>
+            |&nbsp;Theme&nbsp;<a href="https://github.com/blinkfox/hexo-theme-matery" target="_blank">Matery</a>
+            <br>
+            
+            
+            
+            
+            
+            
+            <span id="busuanzi_container_site_pv">
+                |&nbsp;<i class="far fa-eye"></i>&nbsp;总访问量:&nbsp;<span id="busuanzi_value_site_pv"
+                    class="white-color"></span>&nbsp;次
+            </span>
+            
+            
+            <span id="busuanzi_container_site_uv">
+                |&nbsp;<i class="fas fa-users"></i>&nbsp;总访问人数:&nbsp;<span id="busuanzi_value_site_uv"
+                    class="white-color"></span>&nbsp;人
+            </span>
+            
+            <br>
+            
+            <br>
+            
+        </div>
+        <div class="col s12 m4 l4 social-link social-statis">
+    <a href="https://github.com/carywei" class="tooltipped" target="_blank" data-tooltip="访问我的GitHub" data-position="top" data-delay="50">
+        <i class="fab fa-github"></i>
+    </a>
+
+
+
+    <a href="mailto:weixinyong58@163.com" class="tooltipped" target="_blank" data-tooltip="邮件联系我" data-position="top" data-delay="50">
+        <i class="fas fa-envelope-open"></i>
+    </a>
+
+
+
+
+</div>
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+
+    <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fas fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script src="/js/search.js"></script>
+<script type="text/javascript">
+$(function () {
+    searchFunc("/" + "search.xml", 'searchInput', 'searchResult');
+});
+</script>
+    <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+</div>
+
+
+    <script src="/libs/materialize/materialize.min.js"></script>
+    <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+    <script src="/libs/aos/aos.js"></script>
+    <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+    <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+    <script src="/js/matery.js"></script>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+    <!-- Baidu Analytics -->
+
+    <!-- Baidu Push -->
+
+<script>
+    (function () {
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+
+    
+    <script src="/libs/others/clicklove.js" async="async"></script>
+    
+    
+    <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+    
+    <script src="/libs/instantpage/instantpage.js" type="module"></script>
+    
+
+</body>
+
+</html>

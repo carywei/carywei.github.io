@@ -4,13 +4,13 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="阿里云Docker简单实战, XinyongWei">
-    <meta name="description" content="在阿里云买了个人服务，进行软件安装的时候，通过docker进行简单管理会比较清晰一下，可以开启和停止服务,我使用系统是Centos-7.5
-Aliyun 安装 Docker指南搭建Docker
-部署Docker
-添加yum源
+    <meta name="keywords" content="HID Debug, XinyongWei">
+    <meta name="description" content="在Android系统经常需要分析蓝牙HID设备，特别HOGP协议的蓝牙输入设备 (UHID设备) ，以下从Linux角度，Bluedroid角度
+看看有哪些debug手段吧。
+##Linux角度
+####Debug文件：
 
-yum in">
+通过 /sys/">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -18,7 +18,7 @@ yum in">
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>阿里云Docker简单实战 | XinyongWei</title>
+    <title>HID Debug | XinyongWei</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -308,12 +308,12 @@ yum in">
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/5.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/2.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">阿里云Docker简单实战</h1>
+                    <h1 class="description center-align post-title">HID Debug</h1>
                 </div>
             </div>
         </div>
@@ -430,8 +430,16 @@ yum in">
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/Docker/">
-                                <span class="chip bg-color">Docker</span>
+                            <a href="/tags/HID/">
+                                <span class="chip bg-color">HID</span>
+                            </a>
+                        
+                            <a href="/tags/HOGP/">
+                                <span class="chip bg-color">HOGP</span>
+                            </a>
+                        
+                            <a href="/tags/UHID/">
+                                <span class="chip bg-color">UHID</span>
                             </a>
                         
                     </div>
@@ -442,8 +450,8 @@ yum in">
                     <div class="post-cate">
                         <i class="fas fa-bookmark fa-fw icon-category"></i>
                         
-                            <a href="/categories/Docker/" class="post-category">
-                                Docker
+                            <a href="/categories/USB/" class="post-category">
+                                USB
                             </a>
                         
                     </div>
@@ -455,7 +463,7 @@ yum in">
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2020-02-23
+                    2020-02-26
                 </div>
                 
 
@@ -472,87 +480,37 @@ yum in">
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <p>在阿里云买了个人服务，进行软件安装的时候，通过docker进行简单管理会比较清晰一下，可以开启和停止服务,我使用系统是<strong>Centos-7.5</strong></p>
-<h1 id="Aliyun-安装-Docker指南"><a href="#Aliyun-安装-Docker指南" class="headerlink" title="Aliyun 安装 Docker指南"></a>Aliyun 安装 Docker指南</h1><p><a href="https://help.aliyun.com/document_detail/51853.html?spm=a2c4g.11186623.4.1.6b324c074Tvbxv" target="_blank" rel="noopener">搭建Docker</a></p>
-<h2 id="部署Docker"><a href="#部署Docker" class="headerlink" title="部署Docker"></a>部署Docker</h2><ul>
-<li>添加yum源</li>
-</ul>
-<pre><code>yum install epel-release –y
-yum clean all
-yum list</code></pre><ul>
-<li>安装并运行Docker</li>
-</ul>
-<pre><code>yum install docker-io –y
-systemctl start docker</code></pre><ul>
-<li>检查安装结果</li>
-</ul>
-<pre><code>docker info</code></pre><h2 id="使用Docker"><a href="#使用Docker" class="headerlink" title="使用Docker"></a>使用Docker</h2><ul>
-<li>管理Docker守护进程</li>
-</ul>
-<pre><code>systemctl start docker     #运行Docker守护进程
-systemctl stop docker      #停止Docker守护进程
-systemctl restart docker   #重启Docker守护进程</code></pre><ul>
-<li>拉取镜像</li>
-</ul>
-<pre><code>docker pull registry.cn-hangzhou.aliyuncs.com/lxepoo/apache-php5</code></pre><ul>
-<li>修改标签</li>
-</ul>
-<pre><code>docker tag registry.cn-hangzhou.aliyuncs.com/lxepoo/apache-php5:latest aliweb:v1</code></pre><ul>
-<li>查看所有镜像</li>
-</ul>
-<pre><code>docker images</code></pre><ul>
-<li>删除镜像</li>
-</ul>
-<pre><code>docker rmi –f registry.cn-hangzhou.aliyuncs.com/lxepoo/apache-php5</code></pre><h2 id="管理容器"><a href="#管理容器" class="headerlink" title="管理容器"></a>管理容器</h2><ul>
-<li>运行进入容器</li>
-</ul>
-<pre><code>docker run -it containerId /bin/bash</code></pre><ul>
-<li>退出容器</li>
-</ul>
-<pre><code>exit</code></pre><ul>
-<li>进入后台运行容器</li>
-</ul>
-<pre><code>docker exec -it contianerId /bin/bash</code></pre><ul>
-<li>将容器做成镜像</li>
-</ul>
-<pre><code>docker commit containerID/containerName repository:tag</code></pre><ul>
-<li>将运行容器做成镜像</li>
-</ul>
-<pre><code>docker commit contianerId imageName:imageTag</code></pre><ul>
-<li>删除容器</li>
-</ul>
-<pre><code>docker rm -f containerID</code></pre><h2 id="制作镜像"><a href="#制作镜像" class="headerlink" title="制作镜像"></a>制作镜像</h2><ul>
-<li>准备Dockerfile内容。</li>
-</ul>
-<pre><code># vim Dockerfile 
-FROM apachephp:v1  #声明基础镜像来源
-MAINTAINER DTSTACK #声明镜像拥有者
-
-#RUN后面接容器运行前需要执行的命令，由于Dockerfile文件不能超过127行，因此当命令较多时建议写到脚本中执行
-RUN mkdir /dtstact 
-
-#开机启动命令，此处最后一个命令需要是可在前台持续执行的命令，否则容器后台运行时会因为命令执行完而退出。
-ENTRYPOINT ping www.aliyun.com </code></pre><ul>
-<li>构建镜像。</li>
-</ul>
-<pre><code>docker build -t webcentos:v1 .   # . 是Dockerfile文件的路径，不能忽略
-docker images                    #查看是否创建成功
-docker run –d webcentos:v1       #后台运行容器
-docker ps                        #查看当前运行中的容器
-docker ps –a                     #查看所有容器，包括未运行中的
-docker logs CONTAINER ID/IMAGE   #如未查看到刚才运行的容器，则用容器id或者名字查看启动日志排错
-docker commit fb2844b6c070 dtstackweb:v1 #commit 后接容器id 和构建新镜像的名称和版本号。
-docker images                    #列出本地（已下载的和本地创建的）镜像
-docker push                      #将镜像推送至远程仓库，默认为 Docker Hub</code></pre><ul>
-<li>将镜像推送到registry</li>
-</ul>
-<pre><code>docker login --username=dtstack_plus registry.cn-shanghai.aliyuncs.com #执行后输入镜像仓库密码
-docker tag [ImageId] registry.cn-shanghai.aliyuncs.com/dtstack123/test:[镜像版本号]
-docker push registry.cn-shanghai.aliyuncs.com/dtstack123/test:[镜像版本号]</code></pre><blockquote>
-<p>其中<strong>ImageId</strong>和<strong>镜像版本号</strong>请您根据自己的镜像信息进行填写。</p>
+                <p>在Android系统经常需要分析蓝牙HID设备，特别HOGP协议的蓝牙输入设备 (UHID设备) ，以下从Linux角度，Bluedroid角度</p>
+<p>看看有哪些debug手段吧。</p>
+<p>##Linux角度</p>
+<p>####Debug文件：</p>
+<blockquote>
+<p>通过 /sys/kernel/debug/hid/* 暴露的调试接口</p>
 </blockquote>
-<p>在镜像仓库能查看到镜像版本信息则说明推送成功。</p>
-<h3 id=""><a href="#" class="headerlink" title=""></a></h3>
+<ul>
+<li>HID设备的BUS:VendorID:ProductID</li>
+</ul>
+<pre><code>ls /sys/kernel/debug/hid/0005:046d:c534</code></pre><ul>
+<li>HID设备描述符。</li>
+</ul>
+<pre><code>cat /sys/kernel/debug/hid/0005:01ef:07de/rdesc</code></pre><ul>
+<li>实时上报Event。</li>
+</ul>
+<pre><code>cat /sys/kernel/debug/hid/0005:01ef:07de/events</code></pre><p>####Hidraw文件</p>
+<blockquote>
+<p>通过 /dev/hidraw* 设备节点观察数据上报情况，通过Hexdump命令解析数据</p>
+</blockquote>
+<pre><code>busybox hexdump -b /dev/hidraw0</code></pre><p>####lsusb(仅查看usb列表)</p>
+<ul>
+<li>Linux</li>
+</ul>
+<pre><code># lsusb
+Bus 020 Device 003: ID 05ac:0274 Apple Inc. Apple Internal Keyboard / Trackpad  Serial: D3H74340QT1FTV4AY6FF
+Bus 020 Device 002: ID 05ac:8290 Apple Inc. Bluetooth USB Host Controller
+Bus 000 Device 001: ID 1d6b:LPTH Linux Foundation USB 3.0 Bus</code></pre><ul>
+<li>Android</li>
+</ul>
+<pre><code># busybox lsusb</code></pre>
             </div>
             <hr/>
 
@@ -577,7 +535,7 @@ docker push registry.cn-shanghai.aliyuncs.com/dtstack123/test:[镜像版本号]<
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="http://carywei.github.io/2020/02/23/2020/0223/aliyun-docker/">http://carywei.github.io/2020/02/23/2020/0223/aliyun-docker/</a>
+                    <a href="http://carywei.github.io/2020/02/26/2020/0226/hid/">http://carywei.github.io/2020/02/26/2020/0226/hid/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -615,8 +573,16 @@ docker push registry.cn-shanghai.aliyuncs.com/dtstack123/test:[镜像版本号]<
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/Docker/">
-                                    <span class="chip bg-color">Docker</span>
+                                <a href="/tags/HID/">
+                                    <span class="chip bg-color">HID</span>
+                                </a>
+                            
+                                <a href="/tags/HOGP/">
+                                    <span class="chip bg-color">HOGP</span>
+                                </a>
+                            
+                                <a href="/tags/UHID/">
+                                    <span class="chip bg-color">UHID</span>
                                 </a>
                             
                         </div>
@@ -786,36 +752,33 @@ docker push registry.cn-shanghai.aliyuncs.com/dtstack123/test:[镜像版本号]<
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2020/02/26/2020/0226/hid/">
+                <a href="/2020/02/28/2020/0228/hidraw/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/2.jpg" class="responsive-img" alt="HID Debug">
+                        <img src="/medias/featureimages/21.jpg" class="responsive-img" alt="HIDRAW">
                         
-                        <span class="card-title">HID Debug</span>
+                        <span class="card-title">HIDRAW</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            在Android系统经常需要分析蓝牙HID设备，特别HOGP协议的蓝牙输入设备 (UHID设备) ，以下从Linux角度，Bluedroid角度
-看看有哪些debug手段吧。
-##Linux角度
-####Debug文件：
-
-通过 /sys/
+                            hidraw设备主要用途，然后简要分析hidraw设备驱动，最后分析用户空间接口并实例。
+Hidraw介绍在内核Documentation/hid/hidraw.txt中对hidraw设备进行介绍，以及和hiddev的区别。
+hidraw提
                         
                     </div>
                     <div class="publish-info">
                         <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2020-02-26
+                            <i class="far fa-clock fa-fw icon-date"></i>2020-02-28
                         </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/USB/" class="post-category">
-                                    USB
+                            <a href="/categories/Linux/" class="post-category">
+                                    Linux
                                 </a>
                             
                             
@@ -825,16 +788,12 @@ docker push registry.cn-shanghai.aliyuncs.com/dtstack123/test:[镜像版本号]<
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/HID/">
-                        <span class="chip bg-color">HID</span>
+                    <a href="/tags/Linux/">
+                        <span class="chip bg-color">Linux</span>
                     </a>
                     
-                    <a href="/tags/HOGP/">
-                        <span class="chip bg-color">HOGP</span>
-                    </a>
-                    
-                    <a href="/tags/UHID/">
-                        <span class="chip bg-color">UHID</span>
+                    <a href="/tags/Hidraw/">
+                        <span class="chip bg-color">Hidraw</span>
                     </a>
                     
                 </div>
@@ -848,22 +807,24 @@ docker push registry.cn-shanghai.aliyuncs.com/dtstack123/test:[镜像版本号]<
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2020/02/23/2020/0223/wordpress/">
+                <a href="/2020/02/23/2020/0223/aliyun-docker/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/15.jpg" class="responsive-img" alt="Wordpress">
+                        <img src="/medias/featureimages/5.jpg" class="responsive-img" alt="阿里云Docker简单实战">
                         
-                        <span class="card-title">Wordpress</span>
+                        <span class="card-title">阿里云Docker简单实战</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            搭建 Wordpress 系统，我们通过Docker运行此博客系统，通过Docker-compose.yml进行安装。
-工作目录mkdir wordpress
-cd wordpress
-vim docker-compose.yml安装方法之
+                            在阿里云买了个人服务，进行软件安装的时候，通过docker进行简单管理会比较清晰一下，可以开启和停止服务,我使用系统是Centos-7.5
+Aliyun 安装 Docker指南搭建Docker
+部署Docker
+添加yum源
+
+yum in
                         
                     </div>
                     <div class="publish-info">
@@ -874,8 +835,8 @@ vim docker-compose.yml安装方法之
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/blogs/" class="post-category">
-                                    blogs
+                            <a href="/categories/Docker/" class="post-category">
+                                    Docker
                                 </a>
                             
                             
@@ -885,8 +846,8 @@ vim docker-compose.yml安装方法之
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/wordpress/">
-                        <span class="chip bg-color">wordpress</span>
+                    <a href="/tags/Docker/">
+                        <span class="chip bg-color">Docker</span>
                     </a>
                     
                 </div>
