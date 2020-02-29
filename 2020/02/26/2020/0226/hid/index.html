@@ -7,10 +7,8 @@
     <meta name="keywords" content="HID Debug, XinyongWei">
     <meta name="description" content="在Android系统经常需要分析蓝牙HID设备，特别HOGP协议的蓝牙输入设备 (UHID设备) ，以下从Linux角度，Bluedroid角度
 看看有哪些debug手段吧。
-##Linux角度
-####Debug文件：
-
-通过 /sys/">
+Linux角度Debug文件：
+通过 /sys/kernel/d">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -482,9 +480,7 @@
             <div id="articleContent">
                 <p>在Android系统经常需要分析蓝牙HID设备，特别HOGP协议的蓝牙输入设备 (UHID设备) ，以下从Linux角度，Bluedroid角度</p>
 <p>看看有哪些debug手段吧。</p>
-<p>##Linux角度</p>
-<p>####Debug文件：</p>
-<blockquote>
+<h2 id="Linux角度"><a href="#Linux角度" class="headerlink" title="Linux角度"></a>Linux角度</h2><h4 id="Debug文件："><a href="#Debug文件：" class="headerlink" title="Debug文件："></a>Debug文件：</h4><blockquote>
 <p>通过 /sys/kernel/debug/hid/* 暴露的调试接口</p>
 </blockquote>
 <ul>
@@ -496,12 +492,10 @@
 <pre><code>cat /sys/kernel/debug/hid/0005:01ef:07de/rdesc</code></pre><ul>
 <li>实时上报Event。</li>
 </ul>
-<pre><code>cat /sys/kernel/debug/hid/0005:01ef:07de/events</code></pre><p>####Hidraw文件</p>
-<blockquote>
+<pre><code>cat /sys/kernel/debug/hid/0005:01ef:07de/events</code></pre><h4 id="Hidraw文件"><a href="#Hidraw文件" class="headerlink" title="Hidraw文件"></a>Hidraw文件</h4><blockquote>
 <p>通过 /dev/hidraw* 设备节点观察数据上报情况，通过Hexdump命令解析数据</p>
 </blockquote>
-<pre><code>busybox hexdump -b /dev/hidraw0</code></pre><p>####lsusb(仅查看usb列表)</p>
-<ul>
+<pre><code>busybox hexdump -b /dev/hidraw0</code></pre><h4 id="lsusb-仅查看usb列表"><a href="#lsusb-仅查看usb列表" class="headerlink" title="lsusb(仅查看usb列表)"></a>lsusb(仅查看usb列表)</h4><ul>
 <li>Linux</li>
 </ul>
 <pre><code># lsusb
