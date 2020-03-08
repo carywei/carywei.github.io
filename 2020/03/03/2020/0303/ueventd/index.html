@@ -475,7 +475,7 @@
 <li>第二种方式对应“热插拔”（Hot Plug），即在系统运行中，当有设备插入USB端口时，ueventd就会接收到这一事件，为插入的设备动态创建设备节点文件。这一类设备节点文件也被称为动态节点文件。</li>
 </ul>
 <h3 id="背景知识"><a href="#背景知识" class="headerlink" title="背景知识"></a><strong>背景知识</strong></h3><p>在Linux内核2.6版本之前，用户必须直接创建设备节点文件。创建时，必须保证设备文件的主次设备号不发生重叠，再通过mknod进行实际地创建。这样做的缺点是，用户必须记住各个设备的主设备号和次设备号，还要避免设备号之间发生冲突，操作起来较为麻烦。<br>为了弥补这一不足，从内核2.6x开始引入udev(userspace device)，udev以守护进程的形式运行。当设备驱动被加载时，它会掌握主设备号、次设备号，以及设备类型，而后在“/dev”目录下自动创建设备节点文件。<br>从加载设备驱动到udev创建设备节点文件的整个过程如下图所示：</p>
-<p><img src="https://carywei.github.io/2020/03/03/2020/0303/hidraw/hidraw.png?raw=true" alt="img"></p>
+<p><img src="https://carywei.github.io/2020/03/03/2020/0303/ueventd/uevented.png?raw=true" alt="img"></p>
 <p><strong>/</strong></p>
 <p>在系统运行中，若某个设备被插入，内核就会加载与该设备相关的驱动程序。<br>接着，驱动程序的启动函数probe将被调用（定义于设备驱动程序中，由内核自动调用，用来初始化设备），将主设备号、次设备号、设备类型保存到“/sys”文件系统中。<br>然后，驱动程序发送uevent给udev守护进程。<br>最后，udev通过分析内核发出的uevent，查看注册在/sys目录下的设备信息，以在/dev目录相应位置上创建节点文件。</p>
 <p><strong>//</strong></p>
