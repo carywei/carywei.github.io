@@ -4,11 +4,9 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="Wordpress, XinyongWei">
-    <meta name="description" content="搭建 Wordpress 系统，我们通过Docker运行此博客系统，通过Docker-compose.yml进行安装。
-工作目录mkdir wordpress
-cd wordpress
-vim docker-compose.yml安装方法之">
+    <meta name="keywords" content="ueventd.rc, XinyongWei">
+    <meta name="description" content="与Linux相同，Android中的应用程序通过设备驱动访问硬件设备。设备节点文件是设备驱动的逻辑文件，应用程序使用设备节点文件来访问驱动程序。
+在Linux中，运行所需的设备节点文件被被预先定义在“/dev”目录下。应用程序无需经过其它步">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -16,7 +14,7 @@ vim docker-compose.yml安装方法之">
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Wordpress | XinyongWei</title>
+    <title>ueventd.rc | XinyongWei</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -306,12 +304,12 @@ vim docker-compose.yml安装方法之">
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/15.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/16.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">Wordpress</h1>
+                    <h1 class="description center-align post-title">ueventd.rc</h1>
                 </div>
             </div>
         </div>
@@ -428,8 +426,8 @@ vim docker-compose.yml安装方法之">
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/wordpress/">
-                                <span class="chip bg-color">wordpress</span>
+                            <a href="/tags/ueventd-rc/">
+                                <span class="chip bg-color">ueventd.rc</span>
                             </a>
                         
                     </div>
@@ -440,8 +438,8 @@ vim docker-compose.yml安装方法之">
                     <div class="post-cate">
                         <i class="fas fa-bookmark fa-fw icon-category"></i>
                         
-                            <a href="/categories/blogs/" class="post-category">
-                                blogs
+                            <a href="/categories/Android/" class="post-category">
+                                Android
                             </a>
                         
                     </div>
@@ -453,7 +451,7 @@ vim docker-compose.yml安装方法之">
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2020-02-23
+                    2020-03-03
                 </div>
                 
 
@@ -470,96 +468,370 @@ vim docker-compose.yml安装方法之">
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <p>搭建 Wordpress 系统，我们通过Docker运行此博客系统，通过Docker-compose.yml进行安装。</p>
-<h3 id="工作目录"><a href="#工作目录" class="headerlink" title="工作目录"></a>工作目录</h3><pre><code>mkdir wordpress
-cd wordpress
-vim docker-compose.yml</code></pre><h3 id="安装方法之一-compose"><a href="#安装方法之一-compose" class="headerlink" title="安装方法之一(compose)"></a>安装方法之一(compose)</h3><pre><code>curl -L https://github.com/docker/compose/releases/download/1.25.4/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+                <p>与Linux相同，Android中的应用程序通过设备驱动访问硬件设备。设备节点文件是设备驱动的逻辑文件，应用程序使用设备节点文件来访问驱动程序。</p>
+<p>在Linux中，运行所需的设备节点文件被被预先定义在“/dev”目录下。应用程序无需经过其它步骤，通过预先定义的设备节点文件即可访问设备驱动程序。<br>但根据Android的init进程的启动过程，我们知道，Android根文件系统的映像中不存在“/dev”目录，该目录是init进程启动后动态创建的。<br>因此，建立Anroid中设备节点文件的重任，也落在了init进程身上。为此，init进程创建子进程ueventd，并将创建设备节点文件的工作托付给ueventd。</p>
+<h3 id="ueventd两种方式创建设备节点"><a href="#ueventd两种方式创建设备节点" class="headerlink" title="ueventd两种方式创建设备节点"></a>ueventd两种方式创建设备节点</h3><ul>
+<li>第一种方式对应“冷插拔”（Cold Plug），即以预先定义的设备信息为基础，当ueventd启动后，统一创建设备节点文件。这一类设备节点文件也被称为静态节点文件。 </li>
+<li>第二种方式对应“热插拔”（Hot Plug），即在系统运行中，当有设备插入USB端口时，ueventd就会接收到这一事件，为插入的设备动态创建设备节点文件。这一类设备节点文件也被称为动态节点文件。</li>
+</ul>
+<h3 id="背景知识"><a href="#背景知识" class="headerlink" title="背景知识"></a><strong>背景知识</strong></h3><p>在Linux内核2.6版本之前，用户必须直接创建设备节点文件。创建时，必须保证设备文件的主次设备号不发生重叠，再通过mknod进行实际地创建。这样做的缺点是，用户必须记住各个设备的主设备号和次设备号，还要避免设备号之间发生冲突，操作起来较为麻烦。<br>为了弥补这一不足，从内核2.6x开始引入udev(userspace device)，udev以守护进程的形式运行。当设备驱动被加载时，它会掌握主设备号、次设备号，以及设备类型，而后在“/dev”目录下自动创建设备节点文件。<br>从加载设备驱动到udev创建设备节点文件的整个过程如下图所示：</p>
+<p><img src="https://carywei.github.io/2020/03/03/2020/0303/hidraw/hidraw.png?raw=true" alt="img"></p>
+<p><strong>/</strong></p>
+<p>在系统运行中，若某个设备被插入，内核就会加载与该设备相关的驱动程序。<br>接着，驱动程序的启动函数probe将被调用（定义于设备驱动程序中，由内核自动调用，用来初始化设备），将主设备号、次设备号、设备类型保存到“/sys”文件系统中。<br>然后，驱动程序发送uevent给udev守护进程。<br>最后，udev通过分析内核发出的uevent，查看注册在/sys目录下的设备信息，以在/dev目录相应位置上创建节点文件。</p>
+<p><strong>//</strong></p>
+<p>uevent是内核向用户空间进程传递信息的信号系统，即在添加或删除设备时，内核使用uevent将设备信息传递到用户空间。uevent包含设备名称、类别、主设备号、次设备号、设备节点文件需要被创建的目录等信息。</p>
+<p><strong>///</strong></p>
+<p>系统内核启动后，udev进程运行在用户空间内，它无法处理内核启动过程中发生的uevent。虽然内核空间内的设备驱动程序可以正常运行，但由于未创建设备访问驱动所需的设备节点文件，将会出现应用程序无法使用相关设备的问题。<br>Linux系统中，通过冷插拔机制来解决该问题。当内核启动后，冷插拔机制启动udev守护进程，从/sys目录下读取实现注册好的设备信息，而后引发与各设备对应的uevent，创建设备节点。</p>
+<p>总结一下：<br>热插拔时，设备连接后，内核调用驱动程序加载信息到/sys下，然后驱动程序发送uevent到udev；<br>冷插拔时，udev主动读取/sys目录下的信息，然后触发uevent给自己处理。之所以要有冷插拔，是因为内核加载部分驱动程序信息的时间，早于启动udev的时间。</p>
+<p>接下来，我们看看Android中的ueventd是怎么做的。</p>
+<p><strong>正文</strong><br><strong>一、启动ueventd</strong></p>
+<pre><code>......
+init_parse_config_file(&quot;/init.rc&quot;);
+action_for_each_trigger(&quot;early-init&quot;, action_add_queue_tail);
+......</code></pre><p>在init进程的启动过程中，解析完init.rc文件后，首先将“early-init”对应的action加入到运行队列中。因此，当init进程开始处理运行队列中的事件时，首先会处理该action。</p>
+<pre><code>on early-init
+    # Set init and its forked children&#39;s oom_adj.
+    write /proc/1/oom_score_adj -1000
 
-chmod +x /usr/local/bin/docker-compose</code></pre><h3 id="安装方法之二-compose"><a href="#安装方法之二-compose" class="headerlink" title="安装方法之二(compose)"></a>安装方法之二(compose)</h3><h4 id="升级python3-0"><a href="#升级python3-0" class="headerlink" title="升级python3.0"></a>升级python3.0</h4><ul>
-<li>依赖安装</li>
-</ul>
-<pre><code># yum -y install zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel gdbm-devel db4-devel libpcap-devel xz-devel gcc</code></pre><ul>
-<li>安装前查看当前系统下的python版本号</li>
-</ul>
-<pre><code># python -V</code></pre><ul>
-<li>获取python3.x的官方软件包</li>
-</ul>
-<pre><code># wget https://www.python.org/ftp/python/3.6.5/Python-3.6.5.tgz</code></pre><ul>
-<li>解压缩该软件包</li>
-</ul>
-<pre><code># tar -zxvf Python-3.6.5.tgz</code></pre><ul>
-<li>开启python3.0的SSL</li>
-</ul>
-<pre><code># vim Modules/Setup.dist</code></pre><blockquote>
-<pre><code># Socket module helper for socket(2)
-_socket socketmodule.c
+    # Set the security context of /adb_keys if present.
+    restorecon /adb_keys
 
-# Socket module helper for SSL support; you must comment out the other
-# socket line above, and possibly edit the SSL variable:
-SSL=/usr/local/ssl
-_ssl _ssl.c \
--DUSE_SSL -I$(SSL)/include -I$(SSL)/include/openssl \
--L$(SSL)/lib -lssl -lcrypto</code></pre></blockquote>
-<ul>
-<li>在解压目录下安装配置</li>
-</ul>
-<pre><code># cd Python-3.6.5
-# ./configure</code></pre><ul>
-<li>编译并安装</li>
-</ul>
-<pre><code># make
-# make install</code></pre><ul>
-<li>Python2 &amp;&amp; Python3共存</li>
-</ul>
-<pre><code># which python3
-# python3 -v
-# python2 -v
-# pip -v
-# pip3 -v</code></pre><h4 id="pip安装-compose"><a href="#pip安装-compose" class="headerlink" title="pip安装(compose)"></a>pip安装(compose)</h4><ul>
-<li>安装python-pip</li>
-</ul>
-<pre><code>yum -y install epel-release
-yum -y install python-pip</code></pre><ul>
-<li>安装docker-compose</li>
-</ul>
-<pre><code>pip3 install docker-compose</code></pre><ul>
-<li>验证</li>
-</ul>
-<pre><code>docker-compose version</code></pre><h3 id="构建项目-compose"><a href="#构建项目-compose" class="headerlink" title="构建项目(compose)"></a>构建项目(compose)</h3><pre><code>version: &quot;3&quot;
-services:
-  db:
-    image: 10.30.12.55/docker/mysql:5.6
-    volumes:
-      - /var/lib/mysql:/var/lib/mysql
-    #自动重启
-    restart: always
-    environment:
-      #指定MySQL的root账号初始密码
-      MYSQL_ROOT_PASSWORD: 123456
-      #指定容器启动后要创建的数据库
-      MYSQL_DATABASE: wordpress
-      #指定容器在启动后要创建的普通用户账号，该账号有远程登录的权限
-      MYSQL_USER: tom
-      #为用户设置密码
-      MYSQL_PASSWORD: 123456
-  wordpress:
-    depends_on:
-      - db
-    image: 10.30.12.55/docker/wordpress
-    ports:
-      - &quot;8000:80&quot;
-    restart: always
-    environment:
-      #指定要使用的数据库名
-      WORDPRESS_DB_NAME: wordpress
-      #指定要MySQL容器的ip和端口
-      WORDPRESS_DB_HOST: db:3306
-      #指定登录MySQL的账号
-      WORDPRESS_DB_USER: tom
-      #指定登录MySQL的密码
-      WORDPRESS_DB_PASSWORD: 123456</code></pre><h3 id="启动项目"><a href="#启动项目" class="headerlink" title="启动项目"></a>启动项目</h3><pre><code>docker-compose up -d</code></pre><blockquote>
-<p>Compose 就会拉取镜像再创建我们所需要的镜像，然后启动<br>wordpress 和数据库容器。 接着浏览器访问 ip:8000 端口就能看到 WordPress 安装<br>界面了。</p>
-</blockquote>
+    start ueventd</code></pre><p>如上所示，为init.rc内“early-init”对应的action，我们可以看到，将执行start ueventd的命令。</p>
+<p>根据keywords.h中的定义，我们知道action的start关键字，对应函数do_start，定义于system/core/init/builtins.cpp中：</p>
+<pre><code>int do_start(int nargs, char **args)
+{
+    struct service *svc;
+    svc = service_find_by_name(args[1]);
+    if (svc) {
+        service_start(svc, NULL);
+    }
+    return 0;
+}</code></pre><p>如上代码所示，do_start函数通过service_find_by_name函数，从service_list链表中，根据参数找到需启动的service，然后调用service_start函数启动service。</p>
+<p>service_start函数定义于init.cpp文件中：</p>
+<pre><code>void service_start(struct service *svc, const char *dynamic_args) {
+    ..............
+    pid_t pid = fork();
+    if (pid == 0) {
+        ........
+        if (!dynamic_args) {
+            if (execve(svc-&gt;args[0], (char**) svc-&gt;args, (char**) ENV) &lt; 0) {
+                ..............
+            }
+        } else {
+            ............
+            execve(svc-&gt;args[0], (char**) arg_ptrs, (char**) ENV);
+    }
+}</code></pre><p>该函数对参数进行检查后，利用fork函数创建出子进程，然后按照service在init.rc中的定义，对service进行配置，最后调用Linux系统函数execve启动service。</p>
+<p><strong>二、ueventd的主要工作</strong><br>ueventd_main定义于文件system/core/init/ueventd.cpp中，主要进行以下工作：</p>
+<pre><code>int ueventd_main(int argc, char **argv) {
+    //与init进程启动一样，ueventd首先调用umask(0)以清除屏蔽字，保证新建的目录访问权限不受屏蔽字影响
+    umask(000);
+
+    //忽略子进程终止信号
+    signal(SIGCHLD, SIG_IGN);
+    ...........
+}</code></pre><p>如上面代码所示，ueventd调用signal函数，忽略子进程终止产生的SIGCHLD信号。</p>
+<p>=============================以下非主干，可跳过=============================<br><em>I</em><br>signal函数的功能是：为指定的信号安装一个新的信号处理函数。</p>
+<p>signal函数的原型是：<br><em>void (</em> signal( int signo, void (<em>func)(int) ) )(int);</em><br>其中：<br>signo参数是信号名；</p>
+<p>func的值是常量SIG_IGN、常量SIG_DFL或当接到此信号后要调用的函数的地址。<br>如果指定SIG_IGN，则向内核表示忽略此信号（记住有两个信号SIGKILL和SIGSTOP不能忽略）；<br>如果指定SIG_DFL，则表示接到此信号后的动作是系统默认动作；<br>当指定函数地址时，则在信号发生时，调用该函数。我们称这种处理为“捕捉”该信号，称此函数为信号处理程序（signal handler）或信号捕捉函数（signal catching function）。</p>
+<p>signal的返回值是指向之前的信号处理程序的指针。（也就是返回执行signal 函数之前，对信号signo的信号处理程序指针）。</p>
+<p><em>II</em><br>对于某些进程，特别是服务器进程，往往在请求到来时生成子进程进行处理。如果父进程不处理子进程结束的信号，子进程将成为僵尸进程（zombie）从而占用系统资源；如果父进程处理子进程结束的信号，将增加父进程的负担，影响服务器进程的并发性能。在Linux下可以简单地将 SIGCHLD信号的操作设为SIG_IGN，可让内核把子进程的信号转交给init进程去处理。</p>
+<p>回忆init进程的启动过程，我们知道init进程确实注册了针对SIGCHLD的信号处理器。</p>
+<p>=============================以上非主干，可跳过=============================</p>
+<p>我们回到ueventd的ueventd_main函数：</p>
+<pre><code>..........
+//与init进程一样，屏蔽标准输入输出
+open_devnull_stdio();
+//初始化内核log系统
+klog_init();
+klog_set_level(KLOG_NOTICE_LEVEL);
+
+NOTICE(&quot;ueventd started!\n&quot;);
+
+selinux_callback cb;
+cb.func_log = selinux_klog_callback;
+//注册selinux相关的用于打印log的回调函数
+selinux_set_callback(SELINUX_CB_LOG, cb);
+...........
+
+//获取硬件相关信息
+char hardware[PROP_VALUE_MAX];
+property_get(&quot;ro.hardware&quot;, hardware);
+
+//解析ueventd.rc文件
+ueventd_parse_config_file(&quot;/ueventd.rc&quot;);
+//解析厂商相关的ueventd.{hardware}.rc文件
+ueventd_parse_config_file(android::base::StringPrintf(&quot;/ueventd.%s.rc&quot;, hardware).c_str());
+..........</code></pre><p>在分析ueventd_parse_config_file函数前，我们先看看ueventd.rc中大概的内容。</p>
+<pre><code>...........
+/dev/null                 0666   root       root
+/dev/zero                 0666   root       root
+/dev/full                 0666   root       root
+/dev/ptmx                 0666   root       root
+/dev/tty                  0666   root       root
+/dev/random               0666   root       root
+..........</code></pre><p>从上面的代码，可以看出ueventd.rc中主要记录的就是设备节点文件的名称、访问权限、用户ID、组ID。</p>
+<p>ueventd_parse_config_file函数定义于system/core/init/ueventd_parser.cpp中：</p>
+<pre><code>int ueventd_parse_config_file(const char *fn)
+{
+    std::string data;
+    //将文件读取成string
+    if (!read_file(fn, &amp;data)) {
+        return -1;
+    }
+    data.push_back(&#39;\n&#39;); // TODO: fix parse_config.
+    //解析string
+    parse_config(fn, data);
+    dump_parser_state();
+    return 0;
+}</code></pre><p>从上面代码可以看出，与init进程解析init.rc文件一样，ueventd也是利用ueventd_parse_config_file函数，将指定路径对应的文件读取出来，然后再做进一步解析。</p>
+<pre><code>static void parse_config(const char *fn, const std::string&amp; data) {
+    ........
+    for (;;) {
+        //分段
+        int token = next_token(&amp;state);
+        switch (token) {
+        case T_EOF:
+            parse_line(&amp;state, args, nargs);
+            return;
+        case T_NEWLINE:
+            if (nargs) {
+                //解析
+                parse_line(&amp;state, args, nargs);
+                nargs = 0;
+            }
+            state.line++;
+            break;
+        case T_TEXT:
+            if (nargs &lt; UEVENTD_PARSER_MAXARGS) {
+                args[nargs++] = state.text;
+            }
+            break;
+        }
+    }
+}</code></pre><p>parse_config定义于system/core/init/ueventd_parser.cpp中，如上面代码所示，我们可以看出ueventd解析ueventd.rc的逻辑，与init进程解析init.rc文件基本一致，即以行为单位，调用parse_line逐行地解析ueventd.rc文件。</p>
+<p>parse_line定义于system/core/init/ueventd_parser.cpp中：</p>
+<pre><code>static void parse_line(struct parse_state *state, char **args, int nargs) {
+    int kw = lookup_keyword(args[0]);
+    .........
+    if (kw_is(kw, SECTION)) {
+        parse_new_section(state, kw, nargs, args);
+    } else if (kw_is(kw, OPTION)) {
+        state-&gt;parse_line(state, nargs, args);
+    } else {
+        parse_line_device(state, nargs, args);
+    }
+}
+
+static void parse_new_section(struct parse_state *state, int kw, int nargs, char **args)
+{
+    ..........
+    switch(kw) {
+    case K_subsystem:
+        state-&gt;context = parse_subsystem(state, nargs, args);
+        if (state-&gt;context) {
+            state-&gt;parse_line = parse_line_subsystem;
+            return;
+        }
+        break;
+    }
+    state-&gt;parse_line = parse_line_no_op;
+}
+
+static void parse_line_device(parse_state*, int nargs, char** args) {
+    set_device_permission(nargs, args);
+}</code></pre><p>从上面的代码可以看出，parse_line根据解析出来的关键字，调用不同的函数进行处理。其中，parse_new_section主要用于处理ueventd.rc文件中，subsystem对应的数据；对于dev对应的数据，需要调用parse_line_device进行处理。</p>
+<p>parse_line_device主要调用set_device_permission函数：</p>
+<pre><code>void set_device_permission(int nargs, char **args) {
+    .......
+    add_dev_perms(name, attr, perm, uid, gid, prefix, wildcard);
+    .......
+}</code></pre><p>set_device_permission函数定义于/system/core/init/ueventd.cpp中，主要根据参数，获取设备名、uid、gid、权限等，然后调用add_dev_perms函数。</p>
+<pre><code>struct perm_node {
+    struct perms_ dp;
+    struct listnode plist;
+};
+
+int add_dev_perms(.....) {
+    struct perm_node *node = (perm_node*) calloc(1, sizeof(*node));
+    //根据输入参数构造结构体perm_node
+    ......
+    if (attr)
+        list_add_tail(&amp;sys_perms, &amp;node-&gt;plist);
+    else
+        list_add_tail(&amp;dev_perms, &amp;node-&gt;plist);
+
+    return 0;
+}</code></pre><p>add_dev_perms定于文件/system/core/init/devices.cpp中，如上面代码所示，根据输入参数构造结构体perm_node，然后将perm_node加入到对应的双向链表中(perm_node中也是通过包含listnode来构建双向链表的)。</p>
+<p>注意到，根据参数attr，构造出的perm_node将分别被加入到sys_perms和dev_perms中。<br>attr的值由之前的set_device_permission函数决定，当ueventd.rc中的设备名以/sys/开头时，attr的值才可能为1。一般的设备以/dev/开头，应该被加载到dev_perms链表中。</p>
+<p>看完解析ueventd.rc的过程后，我们再次将视角拉回到uevent_main函数的后续过程。</p>
+<pre><code>...........
+device_init();
+...........</code></pre><p>device_init定义于system/core/init/devices.cpp中，我们来看看该函数的实际工作：</p>
+<pre><code>void device_init() {
+    sehandle = NULL;
+    if (is_selinux_enabled() &gt; 0) {
+        //进行安全相关的操作
+        sehandle = selinux_android_file_context_handle();
+        selinux_status_open(true);
+    }
+
+    //创建socket，该socekt用于监听后续的uevent事件
+    device_fd = uevent_open_socket(256*1024, true);
+    if (device_fd == -1) {
+        return;
+    }
+    //通过fcntl函数，将device_fd置为非阻塞。
+    fcntl(device_fd, F_SETFL, O_NONBLOCK);
+
+    //通过access函数判断文件/dev/.coldboot_done（COLDBOOT_DONE）是否存在
+    //若该路径下的文件存在，表明已经进行过冷插拔。
+    if (access(COLDBOOT_DONE, F_OK) == 0) {
+        NOTICE(&quot;Skipping coldboot, already done!\n&quot;);
+        return;
+    }
+
+    //调用coldboot函数，处理/sys/目录下的驱动程序
+    Timer t;
+    coldboot(&quot;/sys/class&quot;);
+    coldboot(&quot;/sys/block&quot;);
+    coldboot(&quot;/sys/devices&quot;);
+    //冷插拔处理完毕后，创建文件/dev/.coldboot_done
+    close(open(COLDBOOT_DONE, O_WRONLY|O_CREAT|O_CLOEXEC, 0000));
+    NOTICE(&quot;Coldboot took %.2fs.\n&quot;, t.duration());
+}</code></pre><p>根据上述代码，我们知道了，ueventd调用device_init函数，创建一个socket来接收uevent，再对内核启动时注册到/sys/下的驱动程序进行“冷插拔”处理，以创建对应的节点文件。</p>
+<p>我们来看看coldboot的过程：</p>
+<pre><code>static void coldboot(const char *path)
+{
+    //打开路径对应目录
+    //opendir函数打开path指向的目录，如果成功则返回一个DIR类型的指针，DIR指针指向path目录下的第一个条目
+    DIR *d = opendir(path);
+    if(d) {
+        //实际的“冷启动”
+        do_coldboot(d);
+        closedir(d);
+    }
+}
+
+static void do_coldboot(DIR *d)
+{
+    struct dirent *de;
+    int dfd, fd;
+
+    //取得目录流文件描述符
+    dfd = dirfd(d);
+
+    fd = openat(dfd, &quot;uevent&quot;, O_WRONLY);
+    if(fd &gt;= 0) {
+        //写入事件，触发uevent
+        write(fd, &quot;add\n&quot;, 4);
+        close(fd);
+        //接收uevent，并进行处理
+        handle_device_fd();
+    }
+
+    //递归文件目录，继续执行do_coldboot
+    //readdir() 会返回参数对应条目的信息，以struct dirent形式展现，然后DIR指针会指向下一个条目
+    while((de = readdir(d))) {
+        DIR *d2;
+
+        if(de-&gt;d_type != DT_DIR || de-&gt;d_name[0] == &#39;.&#39;)
+            continue;
+
+        fd = openat(dfd, de-&gt;d_name, O_RDONLY | O_DIRECTORY);
+        if(fd &lt; 0)
+            continue;
+
+        d2 = fdopendir(fd);
+        if(d2 == 0)
+            close(fd);
+        else {
+            do_coldboot(d2);
+            closedir(d2);
+        }
+    }
+}</code></pre><p>从上面的代码，我们可以看出do_coldboot递归查询“/sys/class”、“/sys/block”和“/sys/devices”目录下所有的“uevent”文件，然后在这些文件中写入“add”，而后会强制触发uevent，并调用handle_device_fd()。handle_device_fd函数负责接收uevent信息，并创建节点文件（后文介绍其代码）。</p>
+<p><em>int openat(int dirfd, const char *pathname, int flags)</em><br><em>openat系统调用与open功能类似，但用法上有以下不同：</em><br><em>如果pathname是相对地址，则以dirfd作为相对地址的寻址目录，而open是从当前目录开始寻址的；</em><br><em>如果pathname是相对地址，且dirfd的值是AT_FDCWD，则openat的行为与open一样，从当前目录开始相对寻址；</em><br><em>如果pathname是绝对地址，则dirfd参数不起作用。</em></p>
+<p>冷插拔结束后，uevent_main剩余的工作，就是监听并处理热插拔事件了。</p>
+<pre><code>.......
+ollfd ufd;
+ufd.events = POLLIN;
+//获取device_init中创建出的socket
+ufd.fd = get_device_fd();
+
+while (true) {
+    ufd.revents = 0;
+    //监听来自驱动的uevent
+    int nr = poll(&amp;ufd, 1, -1);
+    if (nr &lt;= 0) {
+        continue;
+    }
+    if (ufd.revents &amp; POLLIN) {
+        //进行实际的事件处理
+        handle_device_fd();
+    }
+}
+
+    return 0;
+}</code></pre><p>从上面的代码可以看出，ueventd监听到uevent事件后，主要利用handle_device_fd函数进行处理。handle_device_fd定义于/system/core/init/devices.cpp中：</p>
+<pre><code>void handle_device_fd() {
+    ........
+    //uevent_kernel_multicast_recv的功能就是读取写入到device_fd上的数据，其中封装调用了recvmsg函数
+    //读取数据将被存入到msg变量中，数据的长度为n
+    while ((n = uevent_kernel_multicast_recv(device_fd, msg, UEVENT_MSG_LEN)) &gt; 0) {
+        .........
+        //parse_event的功能是按格式将收到的数据解析成uevent
+        parse_event(msg, &amp;uevent);
+        ....
+        handle_device_event(&amp;uevent);
+        //处理firmware对应的uevent的函数，在此不做分析
+        handle_firmware_event(&amp;uevent);
+    }
+}</code></pre><p>从上面代码可以看出，实际处理uevent的函数为handle_device_event。</p>
+<pre><code>static void handle_device_event(struct uevent *uevent){
+    ........
+    if (!strncmp(uevent-&gt;subsystem, &quot;block&quot;, 5)) {
+        handle_block_device_event(uevent);
+    } else if (!strncmp(uevent-&gt;subsystem, &quot;platform&quot;, 8)) {
+        handle_platform_device_event(uevent);
+    } else {
+        handle_generic_device_event(uevent);
+    }
+}</code></pre><p>handle_device_event根据uevent的类型调用相应的函数进行处理。此处，我们重点看看handle_generic_device_event函数。</p>
+<pre><code>static void handle_generic_device_event(struct uevent *uevent) {
+    .........
+    name = parse_device_name(uevent, 64);
+    .........
+    if (subsystem) {
+        ......
+    } else if (!strncmp(uevent-&gt;subsystem, &quot;usb&quot;, 3)) {
+        ......
+    } else if (!strncmp(uevent-&gt;subsystem, &quot;graphics&quot;, 8)) {
+         base = &quot;/dev/graphics/&quot;;
+         make_dir(base, 0755);
+    } else if (!strncmp(uevent-&gt;subsystem, &quot;drm&quot;, 3)) {
+         base = &quot;/dev/dri/&quot;;
+         make_dir(base, 0755);
+    } ................
+       else {
+       base = &quot;/dev/&quot;;
+    }
+    .........
+    handle_device(uevent-&gt;action, devpath, uevent-&gt;path, 0, uevent-&gt;major, uevent-&gt;minor, links);
+}</code></pre><p>handle_generic_device_event函数代码较多（大量if、else），其实就是从uevent中解析出设备的信息，然后根据设备的类型在dev下创建出对应的目录。<br>在创建完目录后，将调用函数handle_device，最终通过mknod创建出设备节点文件。</p>
+<pre><code>static void handle_device(......） {
+    ........
+    make_device(devpath, path, block, major, minor, (const char **)links);
+     ........
+}
+
+static void make_device(......) {
+    .............
+    mode = get_device_perm(path, links, &amp;uid, &amp;gid) | (block ? S_IFBLK : S_IFCHR);
+    ..............
+    mknod(path, mode, dev);
+    .............
+}</code></pre><p><strong>结束语</strong><br>以上对android ueventd的简要分析，这里主要需要了解“冷启动”和“热启动”的概念，了解概念后，代码相对还是比较好理解的。</p>
 
             </div>
             <hr/>
@@ -585,7 +857,7 @@ services:
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="http://carywei.github.io/2020/02/23/2020/0223/wordpress/">http://carywei.github.io/2020/02/23/2020/0223/wordpress/</a>
+                    <a href="http://carywei.github.io/2020/03/03/2020/0303/ueventd/">http://carywei.github.io/2020/03/03/2020/0303/ueventd/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -623,8 +895,8 @@ services:
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/wordpress/">
-                                    <span class="chip bg-color">wordpress</span>
+                                <a href="/tags/ueventd-rc/">
+                                    <span class="chip bg-color">ueventd.rc</span>
                                 </a>
                             
                         </div>
@@ -790,57 +1062,49 @@ services:
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
-                <a href="/2020/02/26/2020/0226/hid/">
+                <a href="/2020/03/03/2020/0303/ueventd/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/2.jpg" class="responsive-img" alt="HID Debug">
+                        <img src="/medias/featureimages/16.jpg" class="responsive-img" alt="ueventd.rc">
                         
-                        <span class="card-title">HID Debug</span>
+                        <span class="card-title">ueventd.rc</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            在Android系统经常需要分析蓝牙HID设备，特别HOGP协议的蓝牙输入设备 (UHID设备) ，以下从Linux角度，Bluedroid角度
-看看有哪些debug手段吧。
-Linux角度Debug文件：
-通过 /sys/kernel/d
+                            与Linux相同，Android中的应用程序通过设备驱动访问硬件设备。设备节点文件是设备驱动的逻辑文件，应用程序使用设备节点文件来访问驱动程序。
+在Linux中，运行所需的设备节点文件被被预先定义在“/dev”目录下。应用程序无需经过其它步
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2020-02-26
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-03-03
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/USB/" class="post-category">
-                                    USB
+                            <a href="/categories/Android/" class="post-category">
+                                    Android
                                 </a>
                             
                             
                         </span>
                     </div>
                 </div>
+
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/HID/">
-                        <span class="chip bg-color">HID</span>
-                    </a>
-                    
-                    <a href="/tags/HOGP/">
-                        <span class="chip bg-color">HOGP</span>
-                    </a>
-                    
-                    <a href="/tags/UHID/">
-                        <span class="chip bg-color">UHID</span>
+                    <a href="/tags/ueventd-rc/">
+                        <span class="chip bg-color">ueventd.rc</span>
                     </a>
                     
                 </div>
@@ -854,36 +1118,35 @@ Linux角度Debug文件：
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2020/02/23/2020/0223/aliyun-docker/">
+                <a href="/2020/03/02/2020/0302/printf/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/5.jpg" class="responsive-img" alt="阿里云Docker简单实战">
+                        <img src="/medias/featureimages/23.jpg" class="responsive-img" alt="printf">
                         
-                        <span class="card-title">阿里云Docker简单实战</span>
+                        <span class="card-title">printf</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            在阿里云买了个人服务，进行软件安装的时候，通过docker进行简单管理会比较清晰一下，可以开启和停止服务,我使用系统是Centos-7.5
-Aliyun 安装 Docker指南搭建Docker
-部署Docker
-添加yum源
-
-yum in
+                            针对C语音打印，总是容易迷，所以总结一下
+函数说明#include &lt;stdio.h&gt;
+...
+int printf ( const char * format, ... );
+format 参数是格式化字符串，由格式化占位符和
                         
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2020-02-23
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-03-02
                             </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/Docker/" class="post-category">
-                                    Docker
+                            <a href="/categories/c/" class="post-category">
+                                    c
                                 </a>
                             
                             
@@ -893,8 +1156,12 @@ yum in
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/Docker/">
-                        <span class="chip bg-color">Docker</span>
+                    <a href="/tags/Linux/">
+                        <span class="chip bg-color">Linux</span>
+                    </a>
+                    
+                    <a href="/tags/Android/">
+                        <span class="chip bg-color">Android</span>
                     </a>
                     
                 </div>

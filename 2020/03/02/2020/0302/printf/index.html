@@ -4,11 +4,12 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="Wordpress, XinyongWei">
-    <meta name="description" content="搭建 Wordpress 系统，我们通过Docker运行此博客系统，通过Docker-compose.yml进行安装。
-工作目录mkdir wordpress
-cd wordpress
-vim docker-compose.yml安装方法之">
+    <meta name="keywords" content="printf, XinyongWei">
+    <meta name="description" content="针对C语音打印，总是容易迷，所以总结一下
+函数说明#include &amp;lt;stdio.h&amp;gt;
+...
+int printf ( const char * format, ... );
+format 参数是格式化字符串，由格式化占位符和">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -16,7 +17,7 @@ vim docker-compose.yml安装方法之">
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Wordpress | XinyongWei</title>
+    <title>printf | XinyongWei</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -306,12 +307,12 @@ vim docker-compose.yml安装方法之">
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/15.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/23.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">Wordpress</h1>
+                    <h1 class="description center-align post-title">printf</h1>
                 </div>
             </div>
         </div>
@@ -428,8 +429,12 @@ vim docker-compose.yml安装方法之">
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/wordpress/">
-                                <span class="chip bg-color">wordpress</span>
+                            <a href="/tags/Linux/">
+                                <span class="chip bg-color">Linux</span>
+                            </a>
+                        
+                            <a href="/tags/Android/">
+                                <span class="chip bg-color">Android</span>
                             </a>
                         
                     </div>
@@ -440,8 +445,8 @@ vim docker-compose.yml安装方法之">
                     <div class="post-cate">
                         <i class="fas fa-bookmark fa-fw icon-category"></i>
                         
-                            <a href="/categories/blogs/" class="post-category">
-                                blogs
+                            <a href="/categories/c/" class="post-category">
+                                c
                             </a>
                         
                     </div>
@@ -453,7 +458,7 @@ vim docker-compose.yml安装方法之">
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2020-02-23
+                    2020-03-02
                 </div>
                 
 
@@ -470,96 +475,116 @@ vim docker-compose.yml安装方法之">
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <p>搭建 Wordpress 系统，我们通过Docker运行此博客系统，通过Docker-compose.yml进行安装。</p>
-<h3 id="工作目录"><a href="#工作目录" class="headerlink" title="工作目录"></a>工作目录</h3><pre><code>mkdir wordpress
-cd wordpress
-vim docker-compose.yml</code></pre><h3 id="安装方法之一-compose"><a href="#安装方法之一-compose" class="headerlink" title="安装方法之一(compose)"></a>安装方法之一(compose)</h3><pre><code>curl -L https://github.com/docker/compose/releases/download/1.25.4/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
-
-chmod +x /usr/local/bin/docker-compose</code></pre><h3 id="安装方法之二-compose"><a href="#安装方法之二-compose" class="headerlink" title="安装方法之二(compose)"></a>安装方法之二(compose)</h3><h4 id="升级python3-0"><a href="#升级python3-0" class="headerlink" title="升级python3.0"></a>升级python3.0</h4><ul>
-<li>依赖安装</li>
+                <p>针对C语音打印，总是容易迷，所以总结一下</p>
+<h3 id="函数说明"><a href="#函数说明" class="headerlink" title="函数说明"></a>函数说明</h3><pre><code>#include &lt;stdio.h&gt;
+...
+int printf ( const char * format, ... );</code></pre><ul>
+<li><p>format 参数是格式化字符串，由格式化<strong>占位符</strong>和<strong>普通字符</strong>组成。</p>
+</li>
+<li><p><strong>“ , ”</strong>后面接的是与<strong>占位符</strong>所对应数据。</p>
+</li>
+<li><p><strong>格式化占位符</strong>（以 % 开头）用于指明<strong>参数值用什么格式化输出</strong>。</p>
+</li>
 </ul>
-<pre><code># yum -y install zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel gdbm-devel db4-devel libpcap-devel xz-devel gcc</code></pre><ul>
-<li>安装前查看当前系统下的python版本号</li>
-</ul>
-<pre><code># python -V</code></pre><ul>
-<li>获取python3.x的官方软件包</li>
-</ul>
-<pre><code># wget https://www.python.org/ftp/python/3.6.5/Python-3.6.5.tgz</code></pre><ul>
-<li>解压缩该软件包</li>
-</ul>
-<pre><code># tar -zxvf Python-3.6.5.tgz</code></pre><ul>
-<li>开启python3.0的SSL</li>
-</ul>
-<pre><code># vim Modules/Setup.dist</code></pre><blockquote>
-<pre><code># Socket module helper for socket(2)
-_socket socketmodule.c
-
-# Socket module helper for SSL support; you must comment out the other
-# socket line above, and possibly edit the SSL variable:
-SSL=/usr/local/ssl
-_ssl _ssl.c \
--DUSE_SSL -I$(SSL)/include -I$(SSL)/include/openssl \
--L$(SSL)/lib -lssl -lcrypto</code></pre></blockquote>
+<h3 id="打印格式"><a href="#打印格式" class="headerlink" title="打印格式"></a>打印格式</h3><table>
+<thead>
+<tr>
+<th>符号</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>“%c”</td>
+<td>char；</td>
+<td>字符</td>
+</tr>
+<tr>
+<td>“%d”</td>
+<td>int；</td>
+<td>有符号十进制整数</td>
+</tr>
+<tr>
+<td>“%s”</td>
+<td>char *；</td>
+<td>字符串</td>
+</tr>
+<tr>
+<td>“%f”</td>
+<td>double;</td>
+<td>以小数形式输出单、双精度浮点数</td>
+</tr>
+<tr>
+<td>“%e”</td>
+<td>double;</td>
+<td>以指数形式输出单、双精度浮点数（大写 E 同e）</td>
+</tr>
+<tr>
+<td>“%g”</td>
+<td>double;</td>
+<td>以 %f 或 %e 中较短的输出宽度输出单（大写G    同g）</td>
+</tr>
+<tr>
+<td>“%u”</td>
+<td>unsigned int；</td>
+<td>无符号十进制</td>
+</tr>
+<tr>
+<td>“%o”</td>
+<td>unsigned int；</td>
+<td>无符号八进制（无前导 0）</td>
+</tr>
+<tr>
+<td>“%x”</td>
+<td>unsigned int；</td>
+<td>无符号十六进制（无前导 0x）（大写X    同x）</td>
+</tr>
+<tr>
+<td>“%p”</td>
+<td>void *；</td>
+<td>指针值</td>
+</tr>
+<tr>
+<td><strong>“n%”</strong></td>
+<td>int *；</td>
+<td>存放已写字符的个数</td>
+</tr>
+<tr>
+<td>“%%”</td>
+<td>%字符</td>
+<td>不进行参数转换；% 自身</td>
+</tr>
+</tbody></table>
+<h3 id="2-1-5-length（长度修饰符，可选）"><a href="#2-1-5-length（长度修饰符，可选）" class="headerlink" title="2.1.5 length（长度修饰符，可选）"></a>2.1.5 length（长度修饰符，可选）</h3><p>length（长度修饰符，可选）的值可以是 h、hh、l、ll 或 L</p>
 <ul>
-<li>在解压目录下安装配置</li>
+<li>hh 表示将相应的参数按 signed char 或 unsigned char 类型输出</li>
+<li>h 表示将相应的参数按 short 或 unsigned short 类型输出</li>
+<li>l 表示将相应的参数按 long 或 unsigned long 类型输出</li>
+<li>ll 表示将相应的参数按 long long 或 unsigned long long 类型输出</li>
+<li>L 表示将相应的参数按 long double 类型输出</li>
 </ul>
-<pre><code># cd Python-3.6.5
-# ./configure</code></pre><ul>
-<li>编译并安装</li>
-</ul>
-<pre><code># make
-# make install</code></pre><ul>
-<li>Python2 &amp;&amp; Python3共存</li>
-</ul>
-<pre><code># which python3
-# python3 -v
-# python2 -v
-# pip -v
-# pip3 -v</code></pre><h4 id="pip安装-compose"><a href="#pip安装-compose" class="headerlink" title="pip安装(compose)"></a>pip安装(compose)</h4><ul>
-<li>安装python-pip</li>
-</ul>
-<pre><code>yum -y install epel-release
-yum -y install python-pip</code></pre><ul>
-<li>安装docker-compose</li>
-</ul>
-<pre><code>pip3 install docker-compose</code></pre><ul>
-<li>验证</li>
-</ul>
-<pre><code>docker-compose version</code></pre><h3 id="构建项目-compose"><a href="#构建项目-compose" class="headerlink" title="构建项目(compose)"></a>构建项目(compose)</h3><pre><code>version: &quot;3&quot;
-services:
-  db:
-    image: 10.30.12.55/docker/mysql:5.6
-    volumes:
-      - /var/lib/mysql:/var/lib/mysql
-    #自动重启
-    restart: always
-    environment:
-      #指定MySQL的root账号初始密码
-      MYSQL_ROOT_PASSWORD: 123456
-      #指定容器启动后要创建的数据库
-      MYSQL_DATABASE: wordpress
-      #指定容器在启动后要创建的普通用户账号，该账号有远程登录的权限
-      MYSQL_USER: tom
-      #为用户设置密码
-      MYSQL_PASSWORD: 123456
-  wordpress:
-    depends_on:
-      - db
-    image: 10.30.12.55/docker/wordpress
-    ports:
-      - &quot;8000:80&quot;
-    restart: always
-    environment:
-      #指定要使用的数据库名
-      WORDPRESS_DB_NAME: wordpress
-      #指定要MySQL容器的ip和端口
-      WORDPRESS_DB_HOST: db:3306
-      #指定登录MySQL的账号
-      WORDPRESS_DB_USER: tom
-      #指定登录MySQL的密码
-      WORDPRESS_DB_PASSWORD: 123456</code></pre><h3 id="启动项目"><a href="#启动项目" class="headerlink" title="启动项目"></a>启动项目</h3><pre><code>docker-compose up -d</code></pre><blockquote>
-<p>Compose 就会拉取镜像再创建我们所需要的镜像，然后启动<br>wordpress 和数据库容器。 接着浏览器访问 ip:8000 端口就能看到 WordPress 安装<br>界面了。</p>
+<h3 id="简单实例"><a href="#简单实例" class="headerlink" title="简单实例"></a>简单实例</h3><pre><code>#include &lt;stdio.h&gt;
+
+int main()
+{
+        int a = 520;
+        int x = 1;
+        char b = &#39;a&#39;;
+        char greeting[]=&quot;two words&quot;;
+        float c = 3.14;
+        double d = 3.141592653;
+
+        printf(&quot;尝试打印输出两个整型数字%d和%d在一个句子中\n&quot;, a,x);
+        printf(&quot;尝试打印输出一个字符%c在一个句子中\n&quot;, b);
+        printf(&quot;尝试打印输出一个字符串%s在一个句子中\n&quot;, greeting);
+        printf(&quot;尝试打印输出一个精确到小数点后两位的数字：%.2f\n&quot;, c);
+        printf(&quot;尝试打印输出一个精确到小数点后9位、宽度为11位的数字：%11.9f\n&quot;, d);
+
+        return 0;
+}</code></pre><h3 id="转义字符"><a href="#转义字符" class="headerlink" title="转义字符"></a>转义字符</h3><blockquote>
+<p><strong>\a</strong>      Write a <bell> character.<br><strong>\b</strong>      Write a <backspace> character.<br><strong>\c</strong>      Ignore remaining characters in this string.<br> <strong>\f</strong>      Write a <form-feed> character.<br><strong>\n</strong>      Write a <new-line> character.<br><strong>\r</strong>      Write a <carriage return> character.<br><strong>\t</strong>      Write a <tab> character.<br><strong>\v</strong>      Write a <vertical tab> character.<br><strong>&#39;</strong>      Write a <single quote> character.<br><strong>\</strong>      Write a backslash character.<br><strong>\num</strong>    Write a byte whose value is the 1-, 2-, or 3-digit octal number num.  Multibyte characters can be constructed using<br>                   multiple \num sequences.</p>
 </blockquote>
+<p><a href="https://blog.csdn.net/dugudaibo/article/details/82712273" target="_blank" rel="noopener">原文链接</a></p>
 
             </div>
             <hr/>
@@ -585,7 +610,7 @@ services:
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="http://carywei.github.io/2020/02/23/2020/0223/wordpress/">http://carywei.github.io/2020/02/23/2020/0223/wordpress/</a>
+                    <a href="http://carywei.github.io/2020/03/02/2020/0302/printf/">http://carywei.github.io/2020/03/02/2020/0302/printf/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -623,8 +648,12 @@ services:
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/wordpress/">
-                                    <span class="chip bg-color">wordpress</span>
+                                <a href="/tags/Linux/">
+                                    <span class="chip bg-color">Linux</span>
+                                </a>
+                            
+                                <a href="/tags/Android/">
+                                    <span class="chip bg-color">Android</span>
                                 </a>
                             
                         </div>
@@ -794,34 +823,32 @@ services:
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2020/02/26/2020/0226/hid/">
+                <a href="/2020/03/03/2020/0303/ueventd/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/2.jpg" class="responsive-img" alt="HID Debug">
+                        <img src="/medias/featureimages/16.jpg" class="responsive-img" alt="ueventd.rc">
                         
-                        <span class="card-title">HID Debug</span>
+                        <span class="card-title">ueventd.rc</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            在Android系统经常需要分析蓝牙HID设备，特别HOGP协议的蓝牙输入设备 (UHID设备) ，以下从Linux角度，Bluedroid角度
-看看有哪些debug手段吧。
-Linux角度Debug文件：
-通过 /sys/kernel/d
+                            与Linux相同，Android中的应用程序通过设备驱动访问硬件设备。设备节点文件是设备驱动的逻辑文件，应用程序使用设备节点文件来访问驱动程序。
+在Linux中，运行所需的设备节点文件被被预先定义在“/dev”目录下。应用程序无需经过其它步
                         
                     </div>
                     <div class="publish-info">
                         <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2020-02-26
+                            <i class="far fa-clock fa-fw icon-date"></i>2020-03-03
                         </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/USB/" class="post-category">
-                                    USB
+                            <a href="/categories/Android/" class="post-category">
+                                    Android
                                 </a>
                             
                             
@@ -831,16 +858,8 @@ Linux角度Debug文件：
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/HID/">
-                        <span class="chip bg-color">HID</span>
-                    </a>
-                    
-                    <a href="/tags/HOGP/">
-                        <span class="chip bg-color">HOGP</span>
-                    </a>
-                    
-                    <a href="/tags/UHID/">
-                        <span class="chip bg-color">UHID</span>
+                    <a href="/tags/ueventd-rc/">
+                        <span class="chip bg-color">ueventd.rc</span>
                     </a>
                     
                 </div>
@@ -854,36 +873,32 @@ Linux角度Debug文件：
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2020/02/23/2020/0223/aliyun-docker/">
+                <a href="/2020/02/29/2020/0229/sepolicy/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/5.jpg" class="responsive-img" alt="阿里云Docker简单实战">
+                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="sepolicy(SEAndroid)">
                         
-                        <span class="card-title">阿里云Docker简单实战</span>
+                        <span class="card-title">sepolicy(SEAndroid)</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            在阿里云买了个人服务，进行软件安装的时候，通过docker进行简单管理会比较清晰一下，可以开启和停止服务,我使用系统是Centos-7.5
-Aliyun 安装 Docker指南搭建Docker
-部署Docker
-添加yum源
-
-yum in
+                            SEAndroid 是一种基于安全策略的MAC安全机制, 同时是SELinux 在Android 上面的移植应用。
+SELinux 是Linux上系统保护机制，SELinux 全称 Security Enhanced Linux (安全强化
                         
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2020-02-23
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-02-29
                             </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/Docker/" class="post-category">
-                                    Docker
+                            <a href="/categories/android/" class="post-category">
+                                    android
                                 </a>
                             
                             
@@ -893,8 +908,16 @@ yum in
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/Docker/">
-                        <span class="chip bg-color">Docker</span>
+                    <a href="/tags/Linux/">
+                        <span class="chip bg-color">Linux</span>
+                    </a>
+                    
+                    <a href="/tags/Sepolicy/">
+                        <span class="chip bg-color">Sepolicy</span>
+                    </a>
+                    
+                    <a href="/tags/Android/">
+                        <span class="chip bg-color">Android</span>
                     </a>
                     
                 </div>
