@@ -5,9 +5,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="keywords" content="HIDRAW, XinyongWei">
-    <meta name="description" content="hidraw设备主要用途，然后简要分析hidraw设备驱动，最后分析用户空间接口并实例。
-Hidraw介绍在内核Documentation/hid/hidraw.txt中对hidraw设备进行介绍，以及和hiddev的区别。
-hidraw提">
+    <meta name="description" content="Hidraw介绍在内核Documentation/hid/hidraw.txt中对hidraw设备进行介绍，以及和hiddev的区别。
+hidraw提供了一个通过USB/Bluetooth接口的裸数据接口，它与hiddev的不同之处在于，发">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -473,15 +472,37 @@ hidraw提">
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <p>hidraw设备主要用途，然后简要分析hidraw设备驱动，最后分析用户空间接口并实例。</p>
-<h2 id="Hidraw介绍"><a href="#Hidraw介绍" class="headerlink" title="Hidraw介绍"></a>Hidraw介绍</h2><p>在内核<a href="https://elixir.bootlin.com/linux/latest/source/Documentation/hid/hidraw.rst" target="_blank" rel="noopener">Documentation/hid/hidraw.txt</a>中对hidraw设备进行介绍，以及和hiddev的区别。</p>
-<p>hidraw提供了一个通过USB/Bluetooth接口的裸数据接口，它和hiddev的区别体现在数据不经过HID parse解析，而且直接数据传输。</p>
+                <h2 id="Hidraw介绍"><a href="#Hidraw介绍" class="headerlink" title="Hidraw介绍"></a>Hidraw介绍</h2><p>在内核<a href="https://elixir.bootlin.com/linux/latest/source/Documentation/hid/hidraw.rst" target="_blank" rel="noopener">Documentation/hid/hidraw.txt</a>中对hidraw设备进行介绍，以及和hiddev的区别。</p>
+<p>hidraw提供了一个通过USB/Bluetooth接口的裸数据接口，它与hiddev的不同之处在于，发送和接收的数据不是由HID解析器解析的，而是从未经修改的设备发送和接收的数据。</p>
+<p>如果用户空间应用程序确切知道如何与硬件设备通信，则应使用Hidraw，并且能够手动解析HID数据，在用户空间的定制自己的驱动程序。</p>
+<p>Hidraw非常适合处理不符合标准HID的设备的数据，应用程序可以使用libudev来创建系统的hidraw设备。</p>
 <blockquote>
 <p>如果用户空间应用程序知道怎么恰当和硬件设备通信，和能够手动构建HID 报表，那么hidraw应该被使用。这通常是在用户控件驱动自定义HID 设备的时候。</p>
 <p>Hidraw与不符合规范的HID 设备通信也是有利 的，这些设备以一种不符合报表描述符不一致的方式发送和接收数据。因为Hiddev解析器通过他发送和接收报表，检测设备的报表描述符，这样的通信是不可能使用hiddev。Hidraw是唯一的选择，为这些不兼容的设备编写一个定制的内核驱动程序。</p>
 <p>Hidraw一个好处是用户空间应用程序使用独立的底层硬件类型。当前，hidraw是通过bluetooth 和 usb实现。在将来，随着硬件总线的发展，hidraw将支持更多的类型。</p>
 </blockquote>
 <p><img src="https://carywei.github.io/2020/02/28/2020/0228/hidraw/hidraw.png?raw=true" alt="img"></p>
+<h1 id="Hidraw-API"><a href="#Hidraw-API" class="headerlink" title="Hidraw API"></a>Hidraw API</h1><h2 id="read"><a href="#read" class="headerlink" title="read"></a>read</h2><ul>
+<li>非阻塞模式读取数据</li>
+</ul>
+<pre><code>O_NONBLOCK flag to open(), or by setting the O_NONBLOCK flag using fcntl().</code></pre><h2 id="write"><a href="#write" class="headerlink" title="write"></a>write</h2><ul>
+<li>通过此接口可与HId设备进行通信。</li>
+</ul>
+<h2 id="ioctl"><a href="#ioctl" class="headerlink" title="ioctl"></a>ioctl</h2><ul>
+<li><strong>HIDIOCGRDESCSIZE</strong>: Get Report Descriptor Size</li>
+<li><strong>HIDIOCGRDESC</strong>: Get Report Descriptor</li>
+</ul>
+<pre><code>hidraw_report_descriptor</code></pre><ul>
+<li><strong>HIDIOCGRAWNAME</strong>: Get Raw Name</li>
+<li><strong>HIDIOCGRAWINFO</strong>: Get Raw Info</li>
+</ul>
+<pre><code>  * BUS_USB | BUS_HIL | BUS_BLUETOOTH | BUS_VIRTUAL
+  * VID
+  * PID</code></pre><ul>
+<li><strong>HIDIOCGRAWPHYS</strong>: Get Physical Address</li>
+<li><strong>HIDIOCSFEATURE</strong>: Send a Feature Report</li>
+<li><strong>HIDIOCGFEATURE</strong>: Get a Feature Report</li>
+</ul>
 <h2 id="Hidraw驱动"><a href="#Hidraw驱动" class="headerlink" title="Hidraw驱动"></a>Hidraw驱动</h2><ul>
 <li>hidraw也是hid类设备</li>
 </ul>
